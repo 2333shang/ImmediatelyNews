@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="70dp"
+    android:layout_height="70dp"
+    android:orientation="horizontal"
+    android:gravity="center">
+    
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/order_content_recyclerview_image"	
+        android:layout_width="50dp"
+    	android:layout_height="50dp"/>
+    
+    <TextView 
+        android:id="@+id/order_content_content"
+        android:layout_width="wrap_content"
+    	android:layout_height="50dp"
+    	android:gravity="center"/>
+
+</LinearLayout>

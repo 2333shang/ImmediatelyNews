@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <!-- 
+	background：背景颜色
+	tabIndicatorColor：标题的下拉线的颜色
+	tabSelectedTextColor：标题的文本被选中时的颜色
+	tabTextColor：标题的文本颜色
+	-->
+	<RelativeLayout
+	    android:id="@+id/tab_frame"
+	    android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<android.support.design.widget.TabLayout
+		    android:id="@+id/type_head_tab"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:background="@android:color/white"
+		    app:tabIndicatorColor="@android:color/holo_red_dark"
+		    app:tabSelectedTextColor="@android:color/holo_red_dark"
+		    app:tabTextColor="@android:color/black"/>
+		
+		<ImageView 
+		    android:layout_width="40dp"
+		    android:layout_height="40dp"
+		    android:background="@android:color/white"
+		    android:src="@drawable/ic_action_add"
+		    android:layout_alignRight="@id/type_head_tab"
+		    android:layout_alignTop="@id/type_head_tab"
+		    android:onClick="addTabItem"/>
+	</RelativeLayout>
+	
+	<android.support.v4.view.ViewPager
+	    android:id="@+id/type_content_viewpager"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:layout_gravity="center"/>
+	   
+
+</LinearLayout>

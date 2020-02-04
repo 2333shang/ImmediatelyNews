@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="240dp">
+    
+    <RelativeLayout
+        android:id="@+id/nav_head_head_layout"
+	    android:layout_width="match_parent"
+	    android:layout_height="180dp"
+    	android:background="#000000">
+	    <de.hdodenhof.circleimageview.CircleImageView
+	        android:id="@+id/cicle_image"
+	        android:layout_width="70dp"
+	        android:layout_height="70dp"
+	        android:src="@drawable/first"
+	        android:layout_centerInParent="true">
+	    </de.hdodenhof.circleimageview.CircleImageView>
+	    
+	    <TextView 
+	        android:id="@+id/mail"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="1152761842@qq.com"
+	        android:textColor="#FFF"
+	        android:textSize="14sp"
+	        android:layout_below="@id/cicle_image"/>
+	    
+	    <TextView 
+	        android:id="@+id/username"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="2333shang"
+	        android:textColor="#FFF"
+	        android:textSize="14sp"
+	        android:layout_below="@id/mail"/>
+
+    </RelativeLayout>
+    
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nav_head_head_layout">
+        
+        <RadioGroup 
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="horizontal">
+		        
+		        <RadioButton
+		            android:id="@+id/nav_head_collect"
+		            android:layout_weight="1"
+			        android:layout_width="0dp"
+			        android:button="@null"
+			        android:layout_height="wrap_content"
+			        android:gravity="center"
+			        android:drawableTop="@drawable/bottom_top_selector"
+			        android:text="收藏"
+			        android:textColor="@color/bottom_text_selector"/>
+			        
+		        <RadioButton 
+		            android:id="@+id/nav_head_fans"
+			        android:layout_weight="1"
+			        android:layout_width="0dp"
+			        android:button="@null"
+			        android:layout_height="wrap_content"
+			        android:gravity="center"
+					android:drawableTop="@drawable/bottom_video_selector"
+			        android:text="粉丝"
+			        android:textColor="@color/bottom_text_selector"/>
+		        
+		        <RadioButton
+		            android:id="@+id/nav_head_heart"
+		            android:layout_weight="1"
+			        android:layout_width="0dp"
+			        android:button="@null"
+			        android:layout_height="wrap_content"
+			        android:gravity="center"
+			        android:drawableTop="@drawable/bottom_type_selector"
+			        android:text="关注"
+			        android:textColor="@color/bottom_text_selector"/>
+			        
+		    </RadioGroup>
+        
+    </LinearLayout>
+</RelativeLayout>

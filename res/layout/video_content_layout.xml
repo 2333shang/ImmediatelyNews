@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="210dp"
+    android:orientation="vertical" >
+    
+    
+    <com.longner.lib.JCVideoPlayerStandard
+        android:id="@+id/video_content_video"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:gravity="center"/>
+    <RelativeLayout 
+        android:layout_width="match_parent"
+    	android:layout_height="30dp">
+	    
+	    <de.hdodenhof.circleimageview.CircleImageView
+	        android:id="@+id/video_user_image"
+	        android:layout_width="30dp"
+	        android:layout_height="30dp"
+	        android:layout_alignParentStart="true"
+	        android:paddingStart="10dp">
+	        
+    	</de.hdodenhof.circleimageview.CircleImageView>
+    	
+	    <TextView
+	        android:id="@+id/video_content_content"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	    	android:layout_toRightOf="@id/video_user_image"
+	        android:paddingStart="10dp"
+	        android:layout_centerVertical="true"/>
+	    
+	    <View
+	        android:id="@+id/video_content_view"
+	        android:layout_width="1dp"
+	    	android:layout_height="wrap_content"
+	    	android:background="#ADAAAD"
+	    	android:layout_alignTop="@id/video_content_content"
+	    	android:layout_toRightOf="@id/video_content_content"
+	    	android:layout_marginLeft="5dp"
+	    	android:layout_marginRight="5dp"
+	    	android:layout_marginBottom="2dp"/>
+
+    	<TextView
+	        android:id="@+id/video_content_order"
+	        android:text="关注"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:textColor="@android:color/holo_red_light"
+	        android:layout_alignTop="@id/video_content_view"
+	    	android:layout_toRightOf="@id/video_content_view"/>
+    	
+    	<ImageView 
+    	    android:id="@+id/video_cotent_comment"
+    	    android:layout_width="30dp"
+	        android:layout_height="30dp"
+	        android:layout_alignParentRight="true"
+	        android:src="@drawable/ic_action_pinlun"
+	        android:paddingRight="10dp"/>
+    	<TextView
+    	    android:id="@+id/video_cotent_comment_text"
+	        android:text="评论"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	    	android:layout_toLeftOf="@id/video_cotent_comment"/>
+    </RelativeLayout>
+
+</LinearLayout>

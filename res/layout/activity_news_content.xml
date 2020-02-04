@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView 
+        android:id="@+id/news_content_detail_title"
+		android:layout_width="match_parent"
+    	android:layout_height="60dp"
+    	android:textSize="36sp"
+    	android:gravity="center_horizontal"/>
+    
+    <View
+   	    android:id="@+id/news_title_divi_view"
+        android:layout_width="match_parent"
+    	android:layout_height="1dp"
+    	android:background="#ADAAAD"
+    	android:layout_below="@id/news_content_detail_title"/>
+    
+    <RelativeLayout
+        android:id="@+id/news_detail_usermessage"
+        android:layout_width="match_parent"
+    	android:layout_height="60dp"
+    	android:layout_below="@id/news_title_divi_view">
+	    
+	    <de.hdodenhof.circleimageview.CircleImageView
+	        android:id="@+id/news_content_detail_image"
+	        android:layout_width="60dp"
+	        android:layout_height="60dp"
+	        android:layout_alignParentStart="true"
+	        android:paddingStart="10dp">
+	        
+    	</de.hdodenhof.circleimageview.CircleImageView>
+    	
+	    <LinearLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="60dp"
+	        android:orientation="vertical"
+	        android:layout_toRightOf="@id/news_content_detail_image"
+	        android:layout_marginLeft="10dp">
+		    <TextView
+		        android:id="@+id/news_content_detail_user"
+		        android:layout_width="wrap_content"
+		        android:layout_height="0dp"
+		        android:layout_weight="1"
+		        android:gravity="center_vertical"/>
+		    
+	    	<TextView
+		        android:id="@+id/news_content_detail_authortype"
+		        android:layout_width="wrap_content"
+		        android:layout_height="0dp"
+		        android:layout_weight="1"
+		        android:gravity="center_vertical"/>
+    	</LinearLayout>
+    	
+	    <Button 
+	        android:id="@+id/news_content_detail_order"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="关注"
+	        android:background="@drawable/order_button_custom"
+	        android:textColor="#ffffff"
+	        android:layout_alignParentEnd="true"
+	        android:layout_marginRight="10dp"
+	        android:layout_centerVertical="true"/>
+    </RelativeLayout>
+    
+   	<View
+   	    android:id="@+id/news_divi_view"
+        android:layout_width="match_parent"
+    	android:layout_height="1dp"
+    	android:background="#ADAAAD"
+    	android:layout_below="@id/news_detail_usermessage"/>
+	
+   	<LinearLayout
+   	    android:orientation="vertical"
+   	    android:layout_width="match_parent"
+   	    android:layout_height="match_parent"
+   	    android:layout_below="@id/news_divi_view">
+   	    
+		<ScrollView
+	        android:id="@+id/video_detail_recyclerview"
+	        android:layout_width="match_parent"
+	    	android:layout_height="0dp"
+	    	android:layout_weight="1">
+	    	
+		    <LinearLayout 
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical"
+		        android:focusableInTouchMode="true"
+				android:focusable="true">
+		        
+			    <TextView
+			        android:id="@+id/news_content_text"
+			        android:layout_width="match_parent"
+		    		android:layout_height="match_parent"/>
+			    
+			    <View
+			        android:layout_width="match_parent"
+			    	android:layout_height="1dp"
+			    	android:background="#ADAAAD"/>
+			    
+			    <android.support.v7.widget.RecyclerView
+			        android:id="@+id/new_content_detail_recyclerview"
+			        android:layout_width="match_parent"
+	    			android:layout_height="wrap_content"/>
+		    </LinearLayout>
+		</ScrollView>
+		
+		<View
+	        android:layout_width="match_parent"
+	    	android:layout_height="1dp"
+	    	android:background="#ADAAAD"
+	    	android:layout_below="@id/news_detail_usermessage"/>
+		
+		<RelativeLayout
+		    android:layout_width="match_parent"
+	    	android:layout_height="50dp">
+		    
+		    <Button 
+		        android:id="@+id/news_content_detail_sendbtn"
+		        android:layout_width="wrap_content"
+		        android:layout_height="match_parent"
+		        android:text="发表"
+		        android:textSize="10sp"
+		        android:layout_alignParentLeft="true"
+		        android:onClick="addComments"/>
+		    
+			 <ImageView 
+		        android:id="@+id/news_content_detail_phraisebtn"
+		        android:layout_width="50dp"
+			    android:layout_height="50dp"
+		        android:layout_alignParentRight="true"
+		        android:layout_marginRight="10dp"
+		        android:src="@drawable/phraise"
+		        android:onClick="phraise"/>
+		     
+		     <ImageView 
+		        android:id="@+id/news_content_detail_collectbtn"
+		        android:layout_width="50dp"
+		        android:layout_height="50dp"
+		        android:layout_toLeftOf="@id/news_content_detail_phraisebtn"
+		        android:src="@drawable/collect"
+		        android:onClick="collect"/>
+		</RelativeLayout>
+		
+	</LinearLayout>
+	
+</RelativeLayout>
