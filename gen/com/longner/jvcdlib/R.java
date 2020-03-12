@@ -47,34 +47,34 @@ public final class R {
 		public static final int skin_shrink_video = 0x7f02007c;
 	}
 	public static final class id {
-		public static final int back = 0x7f0e00b3;
-		public static final int bottom_progressbar = 0x7f0e00b2;
-		public static final int cover = 0x7f0e00b0;
-		public static final int current = 0x7f0e00aa;
-		public static final int duration_image_tip = 0x7f0e00b5;
-		public static final int duration_progressbar = 0x7f0e00b8;
-		public static final int fullscreen = 0x7f0e00ad;
-		public static final int layout_bottom = 0x7f0e00a9;
-		public static final int layout_top = 0x7f0e00ae;
-		public static final int loading = 0x7f0e00af;
-		public static final int progress = 0x7f0e00ab;
-		public static final int share = 0x7f0e00b4;
+		public static final int back = 0x7f0e00b4;
+		public static final int bottom_progressbar = 0x7f0e00b3;
+		public static final int cover = 0x7f0e00b1;
+		public static final int current = 0x7f0e00ab;
+		public static final int duration_image_tip = 0x7f0e00b6;
+		public static final int duration_progressbar = 0x7f0e00b9;
+		public static final int fullscreen = 0x7f0e00ae;
+		public static final int layout_bottom = 0x7f0e00aa;
+		public static final int layout_top = 0x7f0e00af;
+		public static final int loading = 0x7f0e00b0;
+		public static final int progress = 0x7f0e00ac;
+		public static final int share = 0x7f0e00b5;
 		public static final int start = 0x7f0e0036;
-		public static final int surface_container = 0x7f0e00a8;
-		public static final int thumb = 0x7f0e00b1;
+		public static final int surface_container = 0x7f0e00a9;
+		public static final int thumb = 0x7f0e00b2;
 		public static final int title = 0x7f0e004a;
-		public static final int total = 0x7f0e00ac;
-		public static final int tv_current = 0x7f0e00b6;
-		public static final int tv_duration = 0x7f0e00b7;
-		public static final int volume_progressbar = 0x7f0e00b9;
+		public static final int total = 0x7f0e00ad;
+		public static final int tv_current = 0x7f0e00b7;
+		public static final int tv_duration = 0x7f0e00b8;
+		public static final int volume_progressbar = 0x7f0e00ba;
 	}
 	public static final class layout {
-		public static final int jc_layout_base = 0x7f040029;
-		public static final int jc_layout_standard = 0x7f04002a;
-		public static final int jc_layout_standard_fresco = 0x7f04002b;
-		public static final int jc_layout_standard_with_share_button = 0x7f04002c;
-		public static final int jc_progress_dialog = 0x7f04002d;
-		public static final int jc_volume_dialog = 0x7f04002e;
+		public static final int jc_layout_base = 0x7f04002a;
+		public static final int jc_layout_standard = 0x7f04002b;
+		public static final int jc_layout_standard_fresco = 0x7f04002c;
+		public static final int jc_layout_standard_with_share_button = 0x7f04002d;
+		public static final int jc_progress_dialog = 0x7f04002e;
+		public static final int jc_volume_dialog = 0x7f04002f;
 	}
 	public static final class menu {
 		public static final int main = 0x7f0f0000;

@@ -45,6 +45,10 @@
             android:name="com.shang.immediatelynews.activity.NewsContentActivity"
             android:label="@string/title_activity_video_content" >
         </activity>
+        <activity
+            android:name="com.shang.immediatelynews.activity.NewsContentActivity2"
+            android:label="@string/title_activity_video_content" >
+        </activity>
     </application>
 
 </manifest>

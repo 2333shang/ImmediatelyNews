@@ -11,6 +11,7 @@ import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.NewsContentActivity;
+import com.shang.immediatelynews.activity.NewsContentActivity2;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.TopContentAdapter;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
@@ -112,7 +113,7 @@ public class TopFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+				Intent intent = new Intent(getActivity(), NewsContentActivity2.class);
 				intent.putExtra("news", (NewsContent)data);
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
