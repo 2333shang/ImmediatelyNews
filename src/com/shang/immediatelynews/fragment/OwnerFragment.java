@@ -8,7 +8,7 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
 import com.shang.immediatelynews.R;
-import com.shang.immediatelynews.adapter.TypeViewPagerAdapter;
+import com.shang.immediatelynews.adapter.OwnerViewPagerAdapter;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -16,17 +16,16 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-@ContentView(R.layout.type_fragment_layout)
-public class TypeFragment extends BaseFragment {
+@ContentView(R.layout.owner_fragment_layout)
+public class OwnerFragment extends BaseFragment {
 	
-	@ViewInject(R.id.type_head_tab)
-	private TabLayout type_head_tab;
-	@ViewInject(R.id.type_content_viewpager)
-	private ViewPager type_content_viewpager;
-	private List<TypeTabFragment> tab_fragments;
-	private TypeViewPagerAdapter typeAdapter;
+	@ViewInject(R.id.owner_head_tab)
+	private TabLayout owner_head_tab;
+	@ViewInject(R.id.owner_content_viewpager)
+	private ViewPager owner_content_viewpager;
+	private List<OwnerTabFragment> tab_fragments;
+	private OwnerViewPagerAdapter ownerAdapter;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,23 +40,23 @@ public class TypeFragment extends BaseFragment {
 
 	private void setTabLayout() {
 		//初始化数据
-		tab_fragments = new ArrayList<TypeTabFragment>();
-        for (int i=0;i<12;i++){
-        	tab_fragments.add(new TypeTabFragment("标题"+i, "内容"+i));
-        }
+		tab_fragments = new ArrayList<OwnerTabFragment>();
+        tab_fragments.add(new OwnerTabFragment("新闻", "0"));
+        tab_fragments.add(new OwnerTabFragment("视频", "1"));
         //设置ViewPager的适配器
-        typeAdapter = new TypeViewPagerAdapter(getChildFragmentManager(),tab_fragments);
-        type_content_viewpager.setAdapter(typeAdapter);
+        ownerAdapter = new OwnerViewPagerAdapter(getChildFragmentManager(),tab_fragments);
+        owner_content_viewpager.setAdapter(ownerAdapter);
         //关联ViewPager
-        type_head_tab.setupWithViewPager(type_content_viewpager); 
+        owner_head_tab.setupWithViewPager(owner_content_viewpager); 
         //设置固定的
 //      tabLayout.setTabMode(TabLayout.MODE_FIXED);
          //设置滚动的
-        type_head_tab.setTabMode(TabLayout.MODE_SCROLLABLE);
+        owner_head_tab.setTabMode(TabLayout.MODE_SCROLLABLE);
 	}
 
 	@Override
 	public View initFragmentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return x.view().inject(this, inflater, container);
 	}
+	
 }

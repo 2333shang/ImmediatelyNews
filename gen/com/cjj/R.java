@@ -8,7 +8,7 @@ package com.cjj;
 
 public final class R {
 	public static final class array {
-		public static final int material_colors = 0x7f090000;
+		public static final int material_colors = 0x7f0a0000;
 	}
 	public static final class attr {
 		public static final int isLoadMore = 0x7f010011;
@@ -44,10 +44,10 @@ public final class R {
 		public static final int wave_show = 0x7f010003;
 	}
 	public static final class color {
-		public static final int material_blue = 0x7f070002;
-		public static final int material_green = 0x7f070001;
-		public static final int material_red = 0x7f070000;
-		public static final int material_yellow = 0x7f070003;
+		public static final int material_blue = 0x7f090002;
+		public static final int material_green = 0x7f090001;
+		public static final int material_red = 0x7f090000;
+		public static final int material_yellow = 0x7f090003;
 	}
 	public static final class id {
 		public static final int big = 0x7f0e000f;
@@ -57,7 +57,7 @@ public final class R {
 		public static final int visible = 0x7f0e000e;
 	}
 	public static final class string {
-		public static final int app_name = 0x7f080000;
+		public static final int app_name = 0x7f070000;
 	}
 	public static final class styleable {
 		public static final int[] CircleProgressBar = { 0x7f010012, 0x7f010013, 0x7f010014, 0x7f010015, 0x7f010016, 0x7f010017, 0x7f010018, 0x7f010019, 0x7f01001a, 0x7f01001b, 0x7f01001c, 0x7f01001d, 0x7f01001e };

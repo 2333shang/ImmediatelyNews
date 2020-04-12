@@ -1,26 +1,40 @@
 package com.shang.immediatelynews.fragment;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.xutils.x;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.R;
-import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.VideoAdapter;
+import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
+import com.shang.immediatelynews.entities.Content;
+import com.shang.immediatelynews.utils.HttpRequestUtils;
 
-import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 @ContentView(R.layout.video_fragment_layout)
 public class VideoFragment extends BaseFragment {
@@ -29,6 +43,8 @@ public class VideoFragment extends BaseFragment {
 	private RecyclerView video_recyclerView;
 	@ViewInject(R.id.video_recyclerview_refresh)
 	private MaterialRefreshLayout video_recyclerview_refresh;
+	
+	private List<Content> videos = new ArrayList<Content>();
 	
 	private Handler refresh_handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -41,6 +57,12 @@ public class VideoFragment extends BaseFragment {
 				//结束上拉刷新
 				video_recyclerview_refresh.finishRefreshLoadMore();
 				break;
+			case 3:
+				//设置video界面的适配器
+				setVideoAdapter();
+				//设置刷新监听
+				setRefreshListener();
+				break;
 			default:
 				break;
 			}
@@ -49,15 +71,11 @@ public class VideoFragment extends BaseFragment {
 	
 	@Override
 	public void initFragmentData(Bundle savedInstanceState) {
-		//设置video界面的适配器
-		setVideoAdapter();
-		//设置刷新监听
-		setRefreshListener();
+		getVideoContent();
 	}
 
 	private void setRefreshListener() {
 		video_recyclerview_refresh.autoRefresh();//设置自动下拉刷新
-//		video_recyclerview_refresh.autoRefreshLoadMore();//设置自动上拉加载
 		video_recyclerview_refresh.setMaterialRefreshListener(new MaterialRefreshListener() {
 			
 			@Override
@@ -77,7 +95,7 @@ public class VideoFragment extends BaseFragment {
 	}
 
 	private void setVideoAdapter() {
-		VideoAdapter videoAdapter = new VideoAdapter(getActivity());
+		VideoAdapter videoAdapter = new VideoAdapter(getActivity(), videos);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		video_recyclerView.setLayoutManager(layoutManager);
@@ -98,5 +116,27 @@ public class VideoFragment extends BaseFragment {
 	@Override
 	public View initFragmentView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		return x.view().inject(this, inflater, container);
+	}
+
+	public void getVideoContent() {
+		HttpRequestUtils.getRequest(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/video", new Callback() {
+			
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				String data = response.body().string();
+				Gson gson = new GsonBuilder()
+						.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+						.create();
+				Type type = new TypeToken<List<Content>>(){}.getType();
+				videos.addAll((List<Content>)gson.fromJson(data, type));
+				Log.d("news", videos.toString());
+				refresh_handler.sendEmptyMessage(3);
+			}
+			
+			@Override
+			public void onFailure(Call call, IOException response) {
+				
+			}
+		});
 	}
 }

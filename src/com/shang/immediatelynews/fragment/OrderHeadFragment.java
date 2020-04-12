@@ -23,7 +23,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-@ContentView(R.layout.order_head_content_layout)
+@ContentView(R.layout.owner_head_content_layout)
 public class OrderHeadFragment extends BaseFragment {
 	
 	@ViewInject(R.id.order_head_recyclerview)

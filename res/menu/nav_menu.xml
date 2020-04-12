@@ -3,19 +3,19 @@
     <group android:checkableBehavior="single">
         
         <item 
-            android:id="@+id/nav_search"
-            android:icon="@drawable/ic_action_search"
-            android:title="查找"></item>
-        
-        <item 
-            android:id="@+id/nav_video"
-            android:icon="@drawable/ic_action_video"
-            android:title="视频"></item>
-        
-        <item 
-            android:id="@+id/nav_document"
+            android:id="@+id/nav_order"
             android:icon="@drawable/ic_action_document"
-            android:title="文档"></item>
+            android:title="关注"></item>
+        
+        <item 
+            android:id="@+id/nav_collect"
+            android:icon="@drawable/ic_action_document"
+            android:title="收藏"></item>
+        
+        <item 
+            android:id="@+id/nav_owner"
+            android:icon="@drawable/ic_action_search"
+            android:title="个人资料"></item>
         
     </group>
 

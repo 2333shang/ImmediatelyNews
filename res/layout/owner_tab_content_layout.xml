@@ -6,7 +6,7 @@
     
 	<com.cjj.MaterialRefreshLayout
 	    xmlns:app="http://schemas.android.com/apk/res-auto"
-	    android:id="@+id/type_content_recyclerview_refresh"
+	    android:id="@+id/owner_content_recyclerview_refresh"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    app:overlay="false"
@@ -17,7 +17,7 @@
     	app:progress_show_circle_backgroud="true">
     	
 	    <android.support.v7.widget.RecyclerView 
-	        android:id="@+id/type_content_recyclerview"
+	        android:id="@+id/owner_content_recyclerview"
 	        android:layout_width="match_parent"
 	    	android:layout_height="wrap_content"/>
 	    

@@ -2,31 +2,31 @@ package com.shang.immediatelynews.adapter;
 
 import java.util.List;
 
-import com.shang.immediatelynews.fragment.TypeTabFragment;
+import com.shang.immediatelynews.fragment.NewsManagerFragment;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-public class TypeViewPagerAdapter extends FragmentPagerAdapter {
-
-	private List<TypeTabFragment> tab_fragments;
+public class NewsManagerTabAdapter extends FragmentPagerAdapter {
 	
-	public TypeViewPagerAdapter(FragmentManager fm, List<TypeTabFragment> tab_fragments) {
+	private List<NewsManagerFragment> fragments;
+
+	public NewsManagerTabAdapter(FragmentManager fm, List<NewsManagerFragment> fragments) {
 		super(fm);
-		this.tab_fragments = tab_fragments;
+		this.fragments = fragments;
 	}
 
 	@Override
 	public Fragment getItem(int position) {
-		return tab_fragments.get(position);
+		return fragments.get(position);
 	}
 
 	@Override
 	public int getCount() {
-		return tab_fragments.size();
+		return fragments.size();
 	}
-	
+
 	/**
      * 返回标题
      * @param position
@@ -34,6 +34,6 @@ public class TypeViewPagerAdapter extends FragmentPagerAdapter {
      */
 	@Override
 	public CharSequence getPageTitle(int position) {
-		return tab_fragments.get(position).getTitle();
+		return fragments.get(position).getTitle();
 	}
 }

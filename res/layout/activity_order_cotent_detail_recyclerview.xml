@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <TextView 
+        android:id="@+id/order_content_detail_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000000"/>
+    
+    <LinearLayout 
+        android:id="@+id/order_content_detail_content_head"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        android:layout_below="@id/order_content_detail_title">
+        
+        <ImageView
+            android:id="@+id/order_content_detail_content_1"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_marginLeft="5dp"/>
+        <ImageView 
+            android:id="@+id/order_content_detail_content_2"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+        <ImageView 
+            android:id="@+id/order_content_detail_content_3"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_marginRight="5dp"/>
+        
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/order_content_detail_video_head"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:visibility="gone"
+        android:layout_below="@id/order_content_detail_title">
+        
+       <com.longner.lib.JCVideoPlayerStandard
+	        android:id="@+id/order_content_detail_video"
+	        android:layout_width="match_parent"
+	        android:layout_height="180dp"
+	        android:gravity="center"/>
+        
+    </LinearLayout>
+
+</RelativeLayout>

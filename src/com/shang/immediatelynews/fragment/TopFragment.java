@@ -1,7 +1,11 @@
 package com.shang.immediatelynews.fragment;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.xutils.x;
 import org.xutils.view.annotation.ContentView;
@@ -9,23 +13,25 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.NewsContentActivity;
-import com.shang.immediatelynews.activity.NewsContentActivity2;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.TopContentAdapter;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
-import com.shang.immediatelynews.entities.NewsContent;
+import com.shang.immediatelynews.entities.Attachment;
+import com.shang.immediatelynews.entities.Top;
 import com.shang.immediatelynews.loader.GlideImageLoader;
+import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerClickListener;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -35,6 +41,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 @ContentView(R.layout.top_fragment_layout)
 public class TopFragment extends BaseFragment {
@@ -49,7 +58,9 @@ public class TopFragment extends BaseFragment {
 	private RecyclerView top_recyclerView;
 	@ViewInject(R.id.top_recyclerview_refresh)
 	private MaterialRefreshLayout top_recyclerview_refresh;
-	private Activity actvity;
+	
+	private Map<String, List<Top>> tops;
+	private TopContentAdapter topContentAdapter;
 	
 	private Handler refresh_handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
@@ -61,6 +72,7 @@ public class TopFragment extends BaseFragment {
 			case 2:
 				//结束上拉刷新
 				top_recyclerview_refresh.finishRefreshLoadMore();
+				topContentAdapter.notifyDataSetChanged();
 				break;
 			default:
 				break;
@@ -70,10 +82,18 @@ public class TopFragment extends BaseFragment {
 	
 	@Override
 	public void initFragmentData(Bundle savedInstanceState) {
+		String object = (String) this.getArguments().get("topNews");
+		Gson gson = new GsonBuilder()
+				.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+				.create();
+		Type type = new TypeToken<HashMap<String, List<Top>>>(){}.getType();
+		Log.d("news", object);
+		tops = gson.fromJson(object, type);
 		//设置Banner轮播
-		setBanner();
+		setBanner(tops.get("1"));
 		//设置RecyclerView的适配器
-		setRecyclerAdapter();
+		top_recyclerView.setFocusable(false);
+		setRecyclerAdapter(tops.get("0"));
 		//设置刷新监听
 		setRefreshListener();
 	}
@@ -91,16 +111,16 @@ public class TopFragment extends BaseFragment {
 			}
 			
 			@Override
-	       public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
+	        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
 	       	  	//上拉刷新
 				Toast.makeText(getActivity(), "上拉刷新", 0).show();
-				refresh_handler.sendEmptyMessageDelayed(2, 2000);
+				getMoreData(tops.get("0").get(tops.get("0").size()-1));
 	       }
 		});
 	}
 
-	private void setRecyclerAdapter() {
-		TopContentAdapter topContentAdapter = new TopContentAdapter();
+	private void setRecyclerAdapter(List<Top> list) {
+		topContentAdapter = new TopContentAdapter(getActivity(), list);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		top_recyclerView.setLayoutManager(layoutManager);
@@ -113,8 +133,8 @@ public class TopFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Intent intent = new Intent(getActivity(), NewsContentActivity2.class);
-				intent.putExtra("news", (NewsContent)data);
+				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+				intent.putExtra("tops", (Top)data);
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
 			}
@@ -126,25 +146,20 @@ public class TopFragment extends BaseFragment {
 		return x.view().inject(this, inflater, container);
 	}
 	
-	private void setBanner() {
+	private void setBanner(List<Top> list) {
 		images = new ArrayList<String>();
-		Log.d("TAG", Environment.getExternalStorageDirectory() + "/first.jpg");
-		images.add(Environment.getExternalStorageDirectory() + "/first.jpg");
-		images.add(Environment.getExternalStorageDirectory() + "/first.jpg");
-		images.add(Environment.getExternalStorageDirectory() + "/first.jpg");
-		images.add(Environment.getExternalStorageDirectory() + "/first.jpg");
-		images.add(Environment.getExternalStorageDirectory() + "/first.jpg");
-		images.add(Environment.getExternalStorageDirectory() + "/first.jpg");
-		images.add(Environment.getExternalStorageDirectory() + "/first.jpg");
-
 		titles = new ArrayList<String>();
-		titles.add("picture01");
-		titles.add("picture02");
-		titles.add("picture03");
-		titles.add("picture04");
-		titles.add("picture05");
-		titles.add("picture06");
-		titles.add("picture07");
+		for(Top top:list) {
+			List<Attachment> pics = top.getContent().getPics();
+			for(Attachment a:pics) {
+				if(a.getAttachmentType().equals("2")) {
+					images.add("http://192.168.0.105:8080/news/file" + a.getUrl());
+					Log.d("news", "http://192.168.0.105:8080/news/file" + a.getUrl());
+					break;
+				}
+			}
+			titles.add(top.getContent().getTitle());
+		}
 		
 		//设置banner样式
 		banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
@@ -170,6 +185,27 @@ public class TopFragment extends BaseFragment {
 			@Override
 			public void OnBannerClick(int position) {
 				Toast.makeText(getActivity(), "hello" + position, Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+	
+	private void getMoreData(Top top) {
+		HttpRequestUtils.getRequest("http://116.62.234.70:8080/news/top/addmore?topId=" + 12, new Callback() {
+			
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				String addmore = response.body().string();
+				Gson gson = new GsonBuilder()
+						.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+						.create();
+				Type type = new TypeToken<List<Top>>(){}.getType();
+				tops.get("0").addAll((List<Top>)gson.fromJson(addmore, type));
+				refresh_handler.sendEmptyMessage(2);
+			}
+			
+			@Override
+			public void onFailure(Call call, IOException response) {
+				
 			}
 		});
 	}

@@ -5,5 +5,12 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_video_content">VideoContentActivity</string>
+    <string name="title_activity_add_news">AddNewsActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_order">OrderActivity</string>
+    <string name="title_activity_order_cotent">OrderCotentActivity</string>
+    <string name="title_activity_user_info">UserInfoActivity</string>
+    <string name="title_activity_news_manager">NewsManagerActivity</string>
+    <string name="title_activity_top_manager">TopManagerActivity</string>
 
 </resources>

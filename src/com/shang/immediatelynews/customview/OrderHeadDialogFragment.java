@@ -9,7 +9,7 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.adapter.OrderHeadViewpagerAdapter;
-import com.shang.immediatelynews.fragment.OrderFragment;
+import com.shang.immediatelynews.fragment.TypeCompanyFragment;
 import com.shang.immediatelynews.fragment.OrderHeadFragment;
 
 import android.app.Dialog;
@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-@ContentView(R.layout.order_head_fragment_layout)
+@ContentView(R.layout.owner_head_fragment_layout)
 public class OrderHeadDialogFragment extends DialogFragment {
 
 	@ViewInject(R.id.order_head_viewpager)

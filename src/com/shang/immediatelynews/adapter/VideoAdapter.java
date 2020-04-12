@@ -6,6 +6,7 @@ import java.util.List;
 import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.VideoContentActivity;
+import com.shang.immediatelynews.entities.Content;
 import com.shang.immediatelynews.entities.Videos;
 
 import android.app.Activity;
@@ -13,6 +14,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,20 +23,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder>{
 	
-	private List<Videos> videos = new ArrayList<Videos>();
+	private List<Content> videos = new ArrayList<Content>();
 	private Activity activity;
 	
-	{
-		String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/shenxiaoai.mp4";
-		for(int i = 0; i<7 ; i++) {
-			Videos video = new Videos(absolutePath, "Video" + i, 0);
-			videos.add(video);
-		}
-	}
-	
-	public VideoAdapter(Activity activity) {
+	public VideoAdapter(Activity activity, List<Content> videos) {
 		super();
 		this.activity = activity;
+		this.videos = videos;
 	}
 
 	static class ViewHolder extends RecyclerView.ViewHolder{
@@ -66,9 +61,10 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder>{
 
 	@Override
 	public void onBindViewHolder(final ViewHolder holder, final int position) {
-		Videos video = videos.get(position);
-		final String content = video.getVideoUserName();
-		holder.video_content_video.setUp(video.getVideoUrl() , content);
+		Content video = videos.get(position);
+		Log.d("news", video.toString());
+		final String content = video.getAuthorName();
+		holder.video_content_video.setUp(Environment.getExternalStorageDirectory() + "/shenxiaoai.mp4" , content);
 		holder.video_content_video.thumbImageView.setImageResource(R.drawable.first);
 		holder.video_content_content.setText(content);
 		holder.video_user_image.setImageResource(R.drawable.first);
@@ -129,5 +125,5 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder>{
 	public void setOnItemClickListener(OnRecyclerViewItemClickListener itemListener) {
 		this.itemListener = itemListener;
 	}
-
+	
 }

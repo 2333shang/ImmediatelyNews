@@ -3,29 +3,28 @@ package com.shang.immediatelynews.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.xutils.view.annotation.ViewInject;
-
 import com.bumptech.glide.Glide;
+import com.google.gson.internal.LinkedTreeMap;
 import com.shang.immediatelynews.R;
+import com.shang.immediatelynews.entities.Order;
 
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class OrderHeadAdapter extends RecyclerView.Adapter<OrderHeadAdapter.ViewHolder>{
+public class TypeOrderHeadAdapter extends RecyclerView.Adapter<TypeOrderHeadAdapter.ViewHolder>{
 	
-	private List<String> images = new ArrayList<String>();
+	private List<Order> orders = new ArrayList<Order>();
 	
-	{
-		String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
-		for(int i = 0; i<7 ; i++) {
-			images.add(absolutePath);
-		}
+	public TypeOrderHeadAdapter(List<Order> orders) {
+		super();
+		this.orders = orders;
 	}
-	
+
 	static class ViewHolder extends RecyclerView.ViewHolder{
 
 		private View view;
@@ -42,13 +41,16 @@ public class OrderHeadAdapter extends RecyclerView.Adapter<OrderHeadAdapter.View
 
 	@Override
 	public int getItemCount() {
-		return images.size();
+		return orders.size();
 	}
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
-		String image = images.get(position);
-		holder.order_head_user.setText("user" + position);
+		Order order = (Order) orders.get(position);
+		Log.d("news", "order=" + order.toString());
+		String image = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
+		Log.d("news", image);
+		holder.order_head_user.setText(order.getCompany().getCompanyName());
 		Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
 	}
 
@@ -61,7 +63,7 @@ public class OrderHeadAdapter extends RecyclerView.Adapter<OrderHeadAdapter.View
 			@Override
 			public void onClick(View v) {
 				int position = viewHolder.getAdapterPosition();
-				String data = images.get(position);
+				Object data = orders.get(position);
 				if(itemListener != null) {
 					itemListener.onItemClick(v, position, data);
 				}

@@ -5,7 +5,7 @@
     android:orientation="vertical" >
     
     <TextView
-        android:id="@+id/type_content_content"
+        android:id="@+id/owner_content_content"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:gravity="center"/>

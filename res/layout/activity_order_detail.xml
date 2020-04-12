@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/order_detail_headicon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/first"/>
+    
+    <LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical"
+	    android:layout_toRightOf="@id/order_detail_headicon">
+	    
+	    <TextView 
+	        android:id="@+id/order_detail_companyname"
+	        android:layout_width="match_parent"
+	        android:layout_height="20dp"
+	        android:textSize="18sp"
+	        android:textColor="#000000"/>
+	    
+	    <TextView 
+	        android:id="@+id/order_detail_content_title"
+	        android:layout_width="match_parent"
+	        android:layout_height="30dp"
+	        android:textColor="#000000"/>
+	    
+	</LinearLayout>
+	
+    <Button
+        android:id="@+id/order_btn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="+关注"
+        android:layout_alignParentRight="true"/>
+
+</RelativeLayout>

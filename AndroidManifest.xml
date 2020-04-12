@@ -20,7 +20,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,20 +34,52 @@
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name="com.shang.immediatelynews.activity.VideoContentActivity"
+            android:name=".activity.VideoContentActivity"
             android:label="@string/title_activity_video_content" >
         </activity>
         <activity
-            android:name="com.shang.immediatelynews.activity.NewsCommentReplyActivity"
+            android:name=".activity.NewsCommentReplyActivity"
             android:label="@string/title_activity_video_content" >
         </activity>
         <activity
-            android:name="com.shang.immediatelynews.activity.NewsContentActivity"
+            android:name=".activity.NewsContentActivity"
             android:label="@string/title_activity_video_content" >
         </activity>
         <activity
-            android:name="com.shang.immediatelynews.activity.NewsContentActivity2"
-            android:label="@string/title_activity_video_content" >
+            android:name=".activity.AddNewsActivity"
+            android:label="@string/title_activity_add_news" >
+        </activity>
+        <activity
+            android:name=".activity.AddVideoActivity"
+            android:label="@string/title_activity_add_news" >
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_login" >
+        </activity>
+        <activity
+            android:name=".activity.CollectActivity"
+            android:label="@string/title_activity_order" >
+        </activity>
+        <activity
+            android:name=".activity.OrderActivity"
+            android:label="@string/title_activity_order" >
+        </activity>
+        <activity
+            android:name=".activity.OrderCotentActivity"
+            android:label="@string/title_activity_order_cotent" >
+        </activity>
+        <activity
+            android:name=".activity.UserInfoActivity"
+            android:label="@string/title_activity_user_info" >
+        </activity>
+        <activity
+            android:name=".activity.NewsManagerActivity"
+            android:label="@string/title_activity_news_manager" >
+        </activity>
+        <activity
+            android:name="com.shang.immediatelynews.activity.TopManagerActivity"
+            android:label="@string/title_activity_top_manager" >
         </activity>
     </application>
 
