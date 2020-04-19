@@ -8,7 +8,7 @@ package com.cjj;
 
 public final class R {
 	public static final class array {
-		public static final int material_colors = 0x7f0a0000;
+		public static final int material_colors = 0x7f0b0000;
 	}
 	public static final class attr {
 		public static final int isLoadMore = 0x7f010011;
@@ -44,20 +44,20 @@ public final class R {
 		public static final int wave_show = 0x7f010003;
 	}
 	public static final class color {
-		public static final int material_blue = 0x7f090002;
-		public static final int material_green = 0x7f090001;
-		public static final int material_red = 0x7f090000;
-		public static final int material_yellow = 0x7f090003;
+		public static final int material_blue = 0x7f0a0002;
+		public static final int material_green = 0x7f0a0001;
+		public static final int material_red = 0x7f0a0000;
+		public static final int material_yellow = 0x7f0a0003;
 	}
 	public static final class id {
-		public static final int big = 0x7f0e000f;
-		public static final int higher = 0x7f0e000b;
-		public static final int invisible = 0x7f0e000d;
-		public static final int normal = 0x7f0e000c;
-		public static final int visible = 0x7f0e000e;
+		public static final int big = 0x7f0f000f;
+		public static final int higher = 0x7f0f000b;
+		public static final int invisible = 0x7f0f000d;
+		public static final int normal = 0x7f0f000c;
+		public static final int visible = 0x7f0f000e;
 	}
 	public static final class string {
-		public static final int app_name = 0x7f070000;
+		public static final int app_name = 0x7f080000;
 	}
 	public static final class styleable {
 		public static final int[] CircleProgressBar = { 0x7f010012, 0x7f010013, 0x7f010014, 0x7f010015, 0x7f010016, 0x7f010017, 0x7f010018, 0x7f010019, 0x7f01001a, 0x7f01001b, 0x7f01001c, 0x7f01001d, 0x7f01001e };

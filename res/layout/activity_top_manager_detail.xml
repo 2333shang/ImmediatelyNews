@@ -4,9 +4,23 @@
     android:layout_height="match_parent"
     tools:context="${relativePackage}.${activityClass}" >
 
-    <android.support.v7.widget.RecyclerView
-	    android:id="@+id/top_manager_recycler"
+    <com.cjj.MaterialRefreshLayout
+	    xmlns:app="http://schemas.android.com/apk/res-auto"
+	    android:id="@+id/top_manager_refresh"
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"/>
+	    android:layout_height="match_parent"
+	    app:overlay="false"
+    	app:wave_show="true"
+    	app:wave_color="@color/material_green"
+    	app:wave_height_type="normal"
+    	app:isLoadMore="true"
+    	app:progress_show_circle_backgroud="true">
+    
+	    <android.support.v7.widget.RecyclerView
+		    android:id="@+id/top_manager_recycler"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"/>
+    
+    </com.cjj.MaterialRefreshLayout>
 
 </RelativeLayout>

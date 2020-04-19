@@ -1,6 +1,5 @@
 package com.shang.immediatelynews.activity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,25 +7,19 @@ import org.xutils.x;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
+import com.shang.immediatelynews.BaseActivity;
 import com.shang.immediatelynews.R;
-import com.shang.immediatelynews.R.id;
-import com.shang.immediatelynews.R.layout;
 import com.shang.immediatelynews.adapter.OrderContentAdapter;
-import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Order;
 import com.shang.immediatelynews.fragment.OrderContentFragment;
-import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.ActivityUtils;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 @ContentView(R.layout.activity_order_cotent)
-public class OrderCotentActivity extends AppCompatActivity {
+public class OrderCotentActivity extends BaseActivity {
 
 	@ViewInject(R.id.order_content_tab)
 	private TabLayout order_content_tab;
@@ -39,6 +32,7 @@ public class OrderCotentActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		x.view().inject(this);
+		ActivityUtils.addActivities(this);
 		Order order = (Order) getIntent().getSerializableExtra("orders");
 		 //初始化数据
         fragments = new ArrayList<OrderContentFragment>();
@@ -54,5 +48,10 @@ public class OrderCotentActivity extends AppCompatActivity {
          //设置滚动的
         order_content_tab.setTabMode(TabLayout.MODE_SCROLLABLE);
 	}
-
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ActivityUtils.removeActivities(this);
+	}
 }

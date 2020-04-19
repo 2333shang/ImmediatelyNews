@@ -25,47 +25,47 @@ public final class R {
 		public static final int title_textsize = 0x7f010125;
 	}
 	public static final class dimen {
-		public static final int activity_horizontal_margin = 0x7f0b0000;
-		public static final int activity_vertical_margin = 0x7f0b0001;
+		public static final int activity_horizontal_margin = 0x7f0c0000;
+		public static final int activity_vertical_margin = 0x7f0c0001;
 	}
 	public static final class drawable {
-		public static final int black_background = 0x7f02003d;
-		public static final int gray_radius = 0x7f020049;
-		public static final int ic_launcher = 0x7f02005d;
-		public static final int picfive = 0x7f020085;
-		public static final int picfour = 0x7f020086;
-		public static final int picone = 0x7f020087;
-		public static final int picseven = 0x7f020088;
-		public static final int picsix = 0x7f020089;
-		public static final int picthree = 0x7f02008a;
-		public static final int pictwo = 0x7f02008b;
-		public static final int white_radius = 0x7f020098;
+		public static final int black_background = 0x7f02003e;
+		public static final int gray_radius = 0x7f02004a;
+		public static final int ic_launcher = 0x7f02005e;
+		public static final int picfive = 0x7f02008a;
+		public static final int picfour = 0x7f02008b;
+		public static final int picone = 0x7f02008c;
+		public static final int picseven = 0x7f02008d;
+		public static final int picsix = 0x7f02008e;
+		public static final int picthree = 0x7f02008f;
+		public static final int pictwo = 0x7f020090;
+		public static final int white_radius = 0x7f02009d;
 	}
 	public static final class id {
-		public static final int banner = 0x7f0e012d;
-		public static final int bannerTitle = 0x7f0e00ea;
-		public static final int center_crop = 0x7f0e003f;
-		public static final int fit_xy = 0x7f0e0040;
-		public static final int indicator = 0x7f0e00e7;
-		public static final int indicatorInside = 0x7f0e00ec;
-		public static final int numIndicator = 0x7f0e00e8;
-		public static final int numIndicatorInside = 0x7f0e00eb;
-		public static final int titleView = 0x7f0e00e9;
-		public static final int viewpager = 0x7f0e00e6;
+		public static final int banner = 0x7f0f0131;
+		public static final int bannerTitle = 0x7f0f00f5;
+		public static final int center_crop = 0x7f0f003f;
+		public static final int fit_xy = 0x7f0f0040;
+		public static final int indicator = 0x7f0f00f2;
+		public static final int indicatorInside = 0x7f0f00f7;
+		public static final int numIndicator = 0x7f0f00f3;
+		public static final int numIndicatorInside = 0x7f0f00f6;
+		public static final int titleView = 0x7f0f00f4;
+		public static final int viewpager = 0x7f0f00f1;
 	}
 	public static final class layout {
 		public static final int activity_main = 0x7f04001e;
-		public static final int banner = 0x7f040031;
+		public static final int banner = 0x7f04002e;
 	}
 	public static final class string {
-		public static final int action_settings = 0x7f070002;
-		public static final int app_name = 0x7f070000;
-		public static final int hello_world = 0x7f070001;
-		public static final int title_activity_main = 0x7f07001b;
+		public static final int action_settings = 0x7f080002;
+		public static final int app_name = 0x7f080000;
+		public static final int hello_world = 0x7f080001;
+		public static final int title_activity_main = 0x7f08001b;
 	}
 	public static final class style {
-		public static final int AppBaseTheme = 0x7f080000;
-		public static final int AppTheme = 0x7f080001;
+		public static final int AppBaseTheme = 0x7f090000;
+		public static final int AppTheme = 0x7f090001;
 	}
 	public static final class styleable {
 		public static final int[] Banner = { 0x7f010121, 0x7f010122, 0x7f010123, 0x7f010124, 0x7f010125, 0x7f010126, 0x7f010127, 0x7f010128, 0x7f010129, 0x7f01012a, 0x7f01012b, 0x7f01012c };

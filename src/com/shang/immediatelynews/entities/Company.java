@@ -60,6 +60,8 @@ public class Company implements Serializable{
     
     private List<Content> videoContent;
 
+    private Order order;
+    
     public String getId() {
         return id;
     }
@@ -138,6 +140,14 @@ public class Company implements Serializable{
 
 	public void setVideoContent(List<Content> videoContent) {
 		this.videoContent = videoContent;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 
 	@Override

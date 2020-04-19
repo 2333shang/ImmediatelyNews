@@ -49,6 +49,11 @@ public class User implements Serializable{
      * 所属公司ID
      */
     private String companyId;
+    
+    /**
+     * 所属公司名称
+     */
+    private String companyName;
 
     /**
      * 职务(0为普通员工，1为管理员)
@@ -208,6 +213,14 @@ public class User implements Serializable{
 		this.headIcon = headIcon;
 	}
 
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
 	@Override
     public String toString() {
         return "User{" +
@@ -218,6 +231,7 @@ public class User implements Serializable{
         ", gender=" + gender +
         ", birthdate=" + birthdate +
         ", companyId=" + companyId +
+        ", companyName=" + companyName +
         ", status=" + status +
         ", createtime=" + createtime +
         ", updatetime=" + updatetime +

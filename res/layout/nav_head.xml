@@ -12,7 +12,6 @@
 	        android:id="@+id/cicle_image"
 	        android:layout_width="70dp"
 	        android:layout_height="70dp"
-	        android:src="@drawable/first"
 	        android:layout_centerInParent="true">
 	    </de.hdodenhof.circleimageview.CircleImageView>
 	    
@@ -29,11 +28,11 @@
 	        android:id="@+id/username"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="2333shang"
 	        android:textColor="#FFF"
-	        android:textSize="14sp"
+	        android:textSize="18sp"
 	        android:layout_below="@id/cicle_image"
-	        android:layout_centerInParent="true"/>
+	        android:layout_centerInParent="true"
+	        android:layout_marginTop="5dp"/>
 
     </RelativeLayout>
     

@@ -12,5 +12,9 @@
     <string name="title_activity_user_info">UserInfoActivity</string>
     <string name="title_activity_news_manager">NewsManagerActivity</string>
     <string name="title_activity_top_manager">TopManagerActivity</string>
+    <string name="title_activity_news_video">NewsVideoActivity</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <string name="title_activity_company">CompanyActivity</string>
+    <string name="title_activity_user_info_update">UserInfoUpdateActivity</string>
 
 </resources>

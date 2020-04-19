@@ -1,7 +1,5 @@
 package com.shang.immediatelynews;
 
-import java.io.IOException;
-
 import org.xutils.x;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
@@ -14,31 +12,34 @@ import com.shang.immediatelynews.activity.OrderActivity;
 import com.shang.immediatelynews.activity.TopManagerActivity;
 import com.shang.immediatelynews.activity.UserInfoActivity;
 import com.shang.immediatelynews.constant.FileUploadConstant;
+import com.shang.immediatelynews.entities.User;
 import com.shang.immediatelynews.fragment.OwnerFragment;
 import com.shang.immediatelynews.fragment.TopFragment;
 import com.shang.immediatelynews.fragment.TypeCompanyFragment;
 import com.shang.immediatelynews.fragment.VideoFragment;
-import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.ActivityUtils;
+import com.shang.immediatelynews.utils.GlideUtils;
 
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.RadioGroup;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
+import android.widget.TextView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 @ContentView(R.layout.activity_main)
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
 	@ViewInject(R.id.toolbar)
 	private Toolbar toolbar;
@@ -48,7 +49,15 @@ public class MainActivity extends AppCompatActivity {
 	private NavigationView nav_view;
 	@ViewInject(R.id.bottom_title_radio_group)
 	private RadioGroup radiogroup;
-	private Bundle args;
+	private User user;
+	private CircleImageView iv;
+	private TextView username;
+	
+	private TopFragment topFragment = new TopFragment();
+	private OwnerFragment ownerFragment = new OwnerFragment();
+	private VideoFragment videoFragment = new VideoFragment();
+	private TypeCompanyFragment typeFragment = new TypeCompanyFragment();
+	private Fragment currentFragment;//当前Fragment
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,17 +65,20 @@ public class MainActivity extends AppCompatActivity {
 		
 		//初始化xUtils
 		x.view().inject(this);
-		getTopNews();
+		ActivityUtils.addActivities(this);
+		user = (User)getIntent().getSerializableExtra("user");
+		Log.d("new", "user=" + user.toString());
+		setToorbar();
+		setSlideMenu(user);
+		setTop();
 		//默认选中第一项
 		radiogroup.check(R.id.bottom_title_radio_top);
 		//自定义ToolBar并替换默认的ActionBar
-		setToorbar();
 		//监听RadioButton点击并切换不同的页面
 		replaceFragmentByRadioButton();
 		//设置NavigationView默认选中项
 //		nav_view.setCheckedItem(R.id.nav_search);
 		//设置NavigationView的选中监听
-		setSlideMenu();
 		nav_view.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
 			
 			@Override
@@ -83,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 					break;
 				case R.id.nav_owner:
 					intent = new Intent(MainActivity.this, UserInfoActivity.class);
-					startActivity(intent);
+					startActivityForResult(intent, 3);
 					break;
 				case R.id.nav_news:
 					intent = new Intent(MainActivity.this, NewsManagerActivity.class);
@@ -109,35 +121,29 @@ public class MainActivity extends AppCompatActivity {
 		});
 	}
 
-	private void setSlideMenu() {
-		nav_view.inflateMenu(R.menu.nav_menu_admin);
+	private void setSlideMenu(User user) {
+		if("0".equals(user.getStatus())){
+			nav_view.inflateMenu(R.menu.nav_menu);
+		}else if("1".equals(user.getStatus())){
+			nav_view.inflateMenu(R.menu.nav_menu2);
+		}else if("2".equals(user.getStatus())){
+			nav_view.inflateMenu(R.menu.nav_menu_admin);
+		}
+		View headerLayout = nav_view.inflateHeaderView(R.layout.nav_head);
+		iv = (CircleImageView) headerLayout.findViewById(R.id.cicle_image);
+		username = (TextView) headerLayout.findViewById(R.id.username);
+		if(user.getHeadIcon()!=null) {
+			GlideUtils.loadImage(this, iv, user.getHeadIcon().getUrl());
+		}else {
+			GlideUtils.loadImage(this, iv, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + FileUploadConstant.FILE_DEFAULT_HEAD);
+		}	
+		username.setText(user.getUsername());	
 	}
 
-	private void getTopNews() {
-		HttpRequestUtils.getRequest(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/top/seltop", new Callback() {
-
-			@Override
-			public void onFailure(Call call, IOException exception) {
-				Log.d("news", "联网失败");
-			}
-
-			@Override
-			public void onResponse(Call call, Response response) throws IOException {
-				args = new Bundle();
-				args.putString("topNews", response.body().string());
-				runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						//添加第一个页面的Fragment
-						TopFragment topFragment = new TopFragment();
-						topFragment.setArguments(args);
-						getSupportFragmentManager().beginTransaction().add(R.id.main_container, topFragment).commit();
-					}
-				});
-			}
-			
-		});
+	private void setTop() {
+		currentFragment = topFragment;
+		//添加第一个页面的Fragment
+		getSupportFragmentManager().beginTransaction().add(R.id.main_container, topFragment).commit();
 	}
 	
 	private void replaceFragmentByRadioButton() {
@@ -148,21 +154,36 @@ public class MainActivity extends AppCompatActivity {
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 				switch(checkedId) {
 				case R.id.bottom_title_radio_top:
-					TopFragment topFragment = new TopFragment();
-					topFragment.setArguments(args);
-					fragmentTransaction.replace(R.id.main_container, topFragment).commit();
+					fragmentTransaction.hide(currentFragment);
+					currentFragment = topFragment;
+					fragmentTransaction.show(topFragment).commit();
 					break;
 				case R.id.bottom_title_radio_ours:
-					OwnerFragment ownerFragment = new OwnerFragment();
-					fragmentTransaction.replace(R.id.main_container, ownerFragment).commit();
+					fragmentTransaction.hide(currentFragment);
+					currentFragment = ownerFragment;
+					if(!ownerFragment.isAdded()){
+						fragmentTransaction.add(R.id.main_container, ownerFragment).show(ownerFragment).commit();
+					}else {
+						fragmentTransaction.show(ownerFragment).commit();
+					}
 					break;
 				case R.id.bottom_title_radio_video:
-					VideoFragment videoFragment = new VideoFragment();
-					fragmentTransaction.replace(R.id.main_container, videoFragment).commit();
+					fragmentTransaction.hide(currentFragment);
+					currentFragment = videoFragment;
+					if(!videoFragment.isAdded()){
+						fragmentTransaction.add(R.id.main_container, videoFragment).show(videoFragment).commit();
+					}else {
+						fragmentTransaction.show(videoFragment).commit();
+					}
 					break;
 				case R.id.bottom_title_radio_company:
-					TypeCompanyFragment typeFragment = new TypeCompanyFragment();
-					fragmentTransaction.replace(R.id.main_container, typeFragment).commit();
+					fragmentTransaction.hide(currentFragment);
+					currentFragment = typeFragment;
+					if(!typeFragment.isAdded()){
+						fragmentTransaction.add(R.id.main_container, typeFragment).show(typeFragment).commit();
+					}else {
+						fragmentTransaction.show(typeFragment).commit();
+					}
 					break;
 				default:
 					break;
@@ -173,9 +194,8 @@ public class MainActivity extends AppCompatActivity {
 
 	private void setToorbar() {
 		//设置标题
-		toolbar.setTitle("中环集团");
-		//设置子标题
-		toolbar.setSubtitle("第五研究所");
+		Log.d("news", user.getCompanyName());
+		toolbar.setTitle(user.getCompanyName());
 //		toolbar.setNavigationIcon(R.drawable.ic_launcher);
 		//替换默认的ActionBar为ToolBar
 		setSupportActionBar(toolbar);
@@ -200,5 +220,27 @@ public class MainActivity extends AppCompatActivity {
 			drawer.openDrawer(Gravity.START);
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+//		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 3 && resultCode == 2) {
+			String headicon = data.getStringExtra("headicon");
+			String username_str = data.getStringExtra("username");
+			if(headicon!=null) {
+				GlideUtils.loadImage(this, iv, headicon);
+			}
+			if(username_str!=null && !username_str.equals(username.getText().toString())){
+				username.setText(username_str);
+			}
+		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ActivityUtils.removeActivities(this);
 	}
 }

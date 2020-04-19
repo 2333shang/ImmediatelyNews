@@ -6,31 +6,35 @@ import org.xutils.x;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
+import com.google.gson.reflect.TypeToken;
+import com.shang.immediatelynews.BaseActivity;
 import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
-import com.shang.immediatelynews.R.id;
-import com.shang.immediatelynews.R.layout;
 import com.shang.immediatelynews.constant.FileUploadConstant;
+import com.shang.immediatelynews.entities.User;
+import com.shang.immediatelynews.utils.ActivityUtils;
+import com.shang.immediatelynews.utils.GsonUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.NetworkUtils;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
 @ContentView(R.layout.activity_login)
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
 	@ViewInject(R.id.username)
 	public EditText username;
 	@ViewInject(R.id.password)
 	public EditText password;
-	private Bundle args;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,33 +45,38 @@ public class LoginActivity extends AppCompatActivity {
 	public void login(View v) {
 		final String username_text = username.getText().toString();
 		final String password_text = password.getText().toString();
+		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(this, "登陆中,请勿执行其他操作！");
 		HttpRequestUtils.getRequest(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/user/login?username=" + username_text + "&password=" + password_text, new Callback() {
 
 			@Override
 			public void onFailure(Call call, IOException exception) {
-				Log.d("news", "联网失败");
+				NetworkUtils.dismissLoading2(showLoading2);
+				NetworkUtils.showErrorMessage(LoginActivity.this, getMessage());
 			}
 
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				args = new Bundle();
-				String user = response.body().string();
-				args.putString("topNews", user);
-				Log.d("news", "http://116.62.234.70:8080/news/user/login?username=" + username_text + "&password=" + password_text);
-				Log.d("news", user);
+				String object = response.body().string();
+				final User user = GsonUtils.getGsonWithLocalDate(new TypeToken<User>() {}, object);
+				Log.d("news", user.toString());
 				runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
-						//添加第一个页面的Fragment
-						Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-						intent.putExtra("user", args);
-						startActivity(intent);
-						finish();
+						if("0".equals(user.getLoginMessage())){
+							Toast.makeText(LoginActivity.this, "用户名或密码出错!", 0).show();
+						}else {
+							//添加第一个页面的Fragment
+							Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+							intent.putExtra("user", user);
+							startActivity(intent);
+							finish();
+						}
+						NetworkUtils.dismissLoading2(showLoading2);
 					}
 				});
 			}
-			
 		});
 	}
+	
 }

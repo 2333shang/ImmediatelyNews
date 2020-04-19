@@ -5,12 +5,9 @@ import java.util.List;
 
 import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.R;
-import com.shang.immediatelynews.activity.VideoContentActivity;
 import com.shang.immediatelynews.entities.Content;
-import com.shang.immediatelynews.entities.Videos;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
@@ -85,20 +82,20 @@ public class VideoAdapter extends RecyclerView.Adapter<VideoAdapter.ViewHolder>{
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(v.getContext(), VideoContentActivity.class);
-				intent.putExtra("video", videos.get(position));
-				v.getContext().startActivity(intent);
-				activity.overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
+//				Intent intent = new Intent(v.getContext(), VideoContentActivity.class);
+//				intent.putExtra("video", videos.get(position));
+//				v.getContext().startActivity(intent);
+//				activity.overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
 			}
 		});
 		holder.video_content_comment_text.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(v.getContext(), VideoContentActivity.class);
-				intent.putExtra("video", videos.get(position));
-				v.getContext().startActivity(intent);
-				activity.overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
+//				Intent intent = new Intent(v.getContext(), VideoContentActivity.class);
+//				intent.putExtra("video", videos.get(position));
+//				v.getContext().startActivity(intent);
+//				activity.overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
 			}
 		});
 	}

@@ -9,11 +9,10 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.adapter.OrderHeadViewpagerAdapter;
-import com.shang.immediatelynews.fragment.TypeCompanyFragment;
+import com.shang.immediatelynews.entities.Order;
 import com.shang.immediatelynews.fragment.OrderHeadFragment;
 
 import android.app.Dialog;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -30,7 +29,9 @@ public class OrderHeadDialogFragment extends DialogFragment {
 
 	@ViewInject(R.id.order_head_viewpager)
 	private ViewPager viewPager;
+	private List<Order> orders;
 	private int position;
+	
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +47,9 @@ public class OrderHeadDialogFragment extends DialogFragment {
 		super();
 	}
     
-    public OrderHeadDialogFragment(int position) {
+    public OrderHeadDialogFragment(List<Order> orders, int position) {
 		super();
+		this.orders = orders;
 		this.position = position;
 	}
 
@@ -79,8 +81,8 @@ public class OrderHeadDialogFragment extends DialogFragment {
     
     private List<OrderHeadFragment> getFragments(){
         List<OrderHeadFragment> orderFragments = new ArrayList<OrderHeadFragment>();
-        for(int i=0; i<7 ; i++) {
-        	orderFragments.add(new OrderHeadFragment(i));
+        for(int i=0; i<orders.size()-1 ; i++) {
+        	orderFragments.add(new OrderHeadFragment(orders.get(i), i));
         }
         return orderFragments;
     }

@@ -1,8 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="${relativePackage}.${activityClass}" >
+    android:orientation="vertical">
 
     <TextView 
         android:id="@+id/top_manager_detail_title"
@@ -15,8 +15,7 @@
         android:id="@+id/top_manager_detail_content_head"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:visibility="gone"
-        android:layout_below="@id/top_manager_detail_title">
+        android:visibility="gone">
         
         <ImageView
             android:id="@+id/top_manager_detail_content_1"
@@ -44,8 +43,7 @@
         android:id="@+id/top_manager_detail_video_head"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:visibility="gone"
-        android:layout_below="@id/top_manager_detail_title">
+        android:visibility="gone">
         
        <com.longner.lib.JCVideoPlayerStandard
 	        android:id="@+id/top_manager_detail_video"
@@ -55,4 +53,34 @@
         
     </LinearLayout>
 
-</RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/top_manager_detail_apply"
+        android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone">
+        
+	    <TextView 
+	        android:id="@+id/top_manager_detail_apply_reason"
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentBottom="true"/>
+	    
+	    <Button 
+	        android:id="@+id/top_manager_detail_apply_rejust"
+	        android:layout_width="50dp"
+		    android:layout_height="30dp"
+		    android:text="退回"
+		    android:layout_alignParentRight="true"
+		    android:background="#ff0000"/>
+        
+	    <Button 
+	        android:id="@+id/top_manager_detail_apply_agree"
+	        android:layout_width="50dp"
+		    android:layout_height="30dp"
+		    android:text="同意"
+		    android:background="#00ff00"
+		    android:layout_toLeftOf="@id/top_manager_detail_apply_rejust"/>
+	    
+    </RelativeLayout>
+</LinearLayout>

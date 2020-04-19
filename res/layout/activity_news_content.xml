@@ -10,10 +10,53 @@
     	android:textSize="36sp"
     	android:gravity="center_horizontal"/>
     
+    <RelativeLayout
+        android:id="@+id/news_content_content"
+	    android:layout_width="wrap_content"
+	    android:layout_height="80dp"
+	    android:layout_below="@id/news_content_title">
+	    
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/content_user_img"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/first"
+            android:layout_alignParentLeft="true">
+        </de.hdodenhof.circleimageview.CircleImageView>
+        
+        <LinearLayout
+		    android:layout_width="wrap_content"
+		    android:layout_height="80dp"
+		    android:orientation="vertical"
+		    android:layout_toRightOf="@id/content_user_img">
+		    
+            <TextView
+                android:id="@+id/content_user_name"
+                android:layout_width="wrap_content"
+		    	android:layout_height="40dp"
+		    	android:text="用户名"/>
+            
+             <TextView
+                android:id="@+id/content_user_company_name"
+                android:layout_width="wrap_content"
+		    	android:layout_height="40dp"
+		    	android:text="企业名"/>
+            
+        </LinearLayout>
+        
+        <Button 
+	        android:id="@+id/content_user_collectbtn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="+收藏"
+	        android:layout_alignParentRight="true"/>
+        
+    </RelativeLayout>
+    
     <com.example.richeditor.RichEditor
         android:id="@+id/news_content_show"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_below="@id/news_content_title"/>
+        android:layout_below="@id/news_content_content"/>
 	
 </RelativeLayout>

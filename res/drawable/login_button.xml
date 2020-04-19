@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+	<!-- 圆角 -->
+    <!-- radius:角度，值越大越趋向于直线 -->
+    <corners android:radius="8dp" >
+    </corners>
+
+    <!-- 内部单色填充 -->
+    <solid android:color="#029ED4" />
+    
+</shape>

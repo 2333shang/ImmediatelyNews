@@ -10,19 +10,26 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
 import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
+import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
+import com.shang.immediatelynews.activity.CompanyActivity;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
+import com.shang.immediatelynews.adapter.TypeContentAdapter;
 import com.shang.immediatelynews.adapter.TypeOrderHeadAdapter;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.customview.OrderHeadDialogFragment;
-import com.shang.immediatelynews.entities.Company;
+import com.shang.immediatelynews.decoration.DividerListItemDecoration;
+import com.shang.immediatelynews.entities.Content;
 import com.shang.immediatelynews.entities.Order;
+import com.shang.immediatelynews.utils.GsonUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.NetworkUtils;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,7 +40,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -45,29 +51,45 @@ public class TypeCompanyFragment extends BaseFragment {
 	private RecyclerView type_head_recyclerView;
 	@ViewInject(R.id.type_recyclerview_refresh)
 	private MaterialRefreshLayout type_recyclerview_refresh;
-	@ViewInject(R.id.company_name)
-	private TextView company_name;
+	@ViewInject(R.id.type_content_recyclerview)
+	private RecyclerView type_content_recyclerview;
 	
 	private List<Order> orders = new ArrayList<Order>();
-	private List<Company> rands = new ArrayList<Company>();
+	private List<Content> contents = new ArrayList<Content>();
+	private TypeContentAdapter contentAdapter;
+	private TypeOrderHeadAdapter orderAdapter;
 	
 	private Handler type_handler = new Handler() {
 		
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 1:
-				
+				//结束下拉刷新
+				type_recyclerview_refresh.finishRefresh();
+				contentAdapter.notifyDataSetChanged();
+				orderAdapter.notifyDataSetChanged();
 				break;
 			case 2:
-				
+				//结束上拉刷新
+				type_recyclerview_refresh.finishRefreshLoadMore();
+				contentAdapter.notifyDataSetChanged();
+				orderAdapter.notifyDataSetChanged();
 				break;
 			case 3:
+				type_recyclerview_refresh.finishRefresh();
+				type_recyclerview_refresh.finishRefreshLoadMore();
+				break;
+			case 4:
 				//设置头部适配器
 				setHeadAdapter(orders);
 				break;
-			case 4:
+			case 5:
 				///设置内容适配器
-				setContent(rands);
+				setContent(contents);
+				setRefreshListener();
+				break;
+			case 6:
+				orderAdapter.notifyDataSetChanged();
 				break;
 			default:
 				break;
@@ -83,7 +105,7 @@ public class TypeCompanyFragment extends BaseFragment {
 	@Override
 	public void initFragmentData(Bundle savedInstanceState) {
 		getOrderContent();
-		getRandContent();
+		getCompanyContent();
 	}
 
 	@Override
@@ -91,13 +113,96 @@ public class TypeCompanyFragment extends BaseFragment {
 		return x.view().inject(this, inflater, container);
 	}
 	
-	private void setContent(List<Company> rand) {
-		Company company = (Company) rand.get(0);
-		company_name.setText(company.getCompanyName());
+	private void setRefreshListener() {
+		type_recyclerview_refresh.setMaterialRefreshListener(new MaterialRefreshListener() {
+			
+			@Override
+			public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
+				//下拉刷新
+				getNewData();
+			}
+			
+			@Override
+	        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
+	       	  	//上拉刷新
+				getMoreData();
+	       }
+		});
+	}
+	
+	protected void getNewData() {
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/content";
+		HttpRequestUtils.getRequest(url, new Callback() {
+			
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				NetworkUtils.addNewsDataResponse(getActivity(), new TypeToken<List<Content>>(){}, contents, response.body().string(), type_handler);
+			}
+			
+			@Override
+			public void onFailure(Call call, IOException exception) {
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
+				type_handler.sendEmptyMessage(3);
+			}
+		});
+		url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/order/orders";
+		HttpRequestUtils.getRequest(url, new Callback() {
+			
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				orders.clear();
+				orders.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Order>>(){}, response.body().string()));
+				type_handler.sendEmptyMessage(6);
+			}
+			
+			@Override
+			public void onFailure(Call call, IOException exception) {
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
+				type_handler.sendEmptyMessage(3);
+			}
+		});
+	}
+
+	protected void getMoreData() {
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/morecontent";
+		HttpRequestUtils.getRequest(url, new Callback() {
+			
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				NetworkUtils.addMoreDataResponse(getActivity(), new TypeToken<List<Content>>(){}, contents, response.body().string(), type_handler);
+			}
+			
+			@Override
+			public void onFailure(Call call, IOException exception) {
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
+				type_handler.sendEmptyMessage(3);
+			}
+		});
+	}
+
+	private void setContent(List<Content> rand) {
+		contentAdapter = new TypeContentAdapter(getActivity(), contents);
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+		type_content_recyclerview.setLayoutManager(layoutManager);
+		type_content_recyclerview.setAdapter(contentAdapter);
+		type_content_recyclerview.addItemDecoration(new DividerListItemDecoration(getActivity(),DividerListItemDecoration.VERTICAL_LIST));
+		//设置动画
+		type_content_recyclerview.setItemAnimator(new DefaultItemAnimator());
+		//设置点击事件
+		contentAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
+			
+			@Override
+			public void onItemClick(View v, int position, Object data) {
+			}
+		});
 	}
 	
 	private void setHeadAdapter(List<Order> order) {
-		TypeOrderHeadAdapter orderAdapter = new TypeOrderHeadAdapter(order);
+		orderAdapter = new TypeOrderHeadAdapter(order);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 		type_head_recyclerView.setLayoutManager(layoutManager);
@@ -109,7 +214,12 @@ public class TypeCompanyFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				new OrderHeadDialogFragment(position).show(getChildFragmentManager(), null);
+				if(position != orders.size()) {
+					new OrderHeadDialogFragment(orders, position).show(getChildFragmentManager(), null);
+				}else {
+					Intent intent = new Intent(getActivity(), CompanyActivity.class);
+					getActivity().startActivity(intent);
+				}
 			}
 		});
 	}
@@ -125,7 +235,7 @@ public class TypeCompanyFragment extends BaseFragment {
 						.create();
 				Type type = new TypeToken<List<Order>>(){}.getType();
 				orders.addAll((List<Order>)gson.fromJson(data, type));
-				type_handler.sendEmptyMessage(3);
+				type_handler.sendEmptyMessage(4);
 			}
 			
 			@Override
@@ -135,23 +245,19 @@ public class TypeCompanyFragment extends BaseFragment {
 		});
 	}
 	
-	public void getRandContent() {
-		HttpRequestUtils.getRequest(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/company/rand", new Callback() {
+	public void getCompanyContent() {
+		HttpRequestUtils.getRequest(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/content", new Callback() {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				String data = response.body().string();
-				Gson gson = new GsonBuilder()
-						.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-						.create();
-				Type type = new TypeToken<List<Company>>(){}.getType();
-				rands.addAll((List<Company>)gson.fromJson(data, type));
-				type_handler.sendEmptyMessage(4);
+				contents.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, response.body().string()));
+				type_handler.sendEmptyMessage(5);
 			}
 			
 			@Override
 			public void onFailure(Call call, IOException exception) {
-				Log.d("news", "error=" + exception);
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}
 		});
 	}

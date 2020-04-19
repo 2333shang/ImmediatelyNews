@@ -11,13 +11,18 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
 import com.example.richeditor.RichEditor;
+import com.shang.immediatelynews.BaseActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.callback.FileUploadCallback;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Attachment;
+import com.shang.immediatelynews.entities.Content;
+import com.shang.immediatelynews.utils.ActivityUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.NetworkUtils;
 import com.zhy.http.okhttp.OkHttpUtils;
 
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -28,27 +33,26 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.widget.EditText;
 import android.widget.Toast;
 import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.FormBody.Builder;
-import okhttp3.Request;
 import okhttp3.Response;
 
 @ContentView(R.layout.activity_add_news)
-public class AddNewsActivity extends AppCompatActivity {
+public class AddNewsActivity extends BaseActivity {
 
 	@ViewInject(R.id.news_content)
 	private RichEditor news_content;
 	@ViewInject(R.id.news_titie)
 	private EditText news_titie;
 	private String preId;
+	private String update;
+	private Content content;
 	
 	private boolean mHasAddImg = false;
 	public Handler file_handler = new Handler() {
@@ -62,7 +66,6 @@ public class AddNewsActivity extends AppCompatActivity {
 			break;
 		case 2:
 			FormBody.Builder params = (Builder) msg.obj;
-			Log.d("news", params.toString());
 			String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addnews";
 			HttpRequestUtils.getPost(url, params, new okhttp3.Callback() {
 				
@@ -78,7 +81,28 @@ public class AddNewsActivity extends AppCompatActivity {
 				}
 			});
 			break;
-
+		case 3:
+			params = (Builder) msg.obj;
+			url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/updatecontent";
+			HttpRequestUtils.getPost(url, params, new okhttp3.Callback() {
+				
+				@Override
+				public void onResponse(Call call, Response response) throws IOException {
+					Log.d("news", "更新成功！" + response.body().string());
+					Intent data = new Intent();
+					data.putExtra("updateid", content.getId());
+					data.putExtra("updatetitle", news_titie.getText().toString());
+					data.putExtra("updatecontent", news_content.getHtml());
+					setResult(2, data);
+					finish();
+				}
+				
+				@Override
+				public void onFailure(Call call, IOException response) {
+					
+				}
+			});
+			break;
 		default:
 			break;
 		}
@@ -89,11 +113,20 @@ public class AddNewsActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		x.view().inject(this);
-		preId = UUID.randomUUID().toString().replaceAll("-", "");
+		ActivityUtils.addActivities(this);
 		news_content.setPadding(10, 10, 10, 10);
 		WebSettings webSettings = news_content.getSettings();
 		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {         
 			webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+		}
+		Intent intent = getIntent();
+		update = intent.getStringExtra("update");
+		if(update != null && "1".equals(update)) {
+			content = (Content) intent.getSerializableExtra("news");
+			news_content.setHtml(content.getContent());
+			news_titie.setText(content.getTitle());
+		}else {
+			preId = UUID.randomUUID().toString().replaceAll("-", "");
 		}
 		news_content.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
 			@Override
@@ -236,14 +269,18 @@ public class AddNewsActivity extends AppCompatActivity {
 	}
 	
 	public void submit(View v) {
-		Log.d("news", news_content.getHtml());
 		FormBody.Builder params=new FormBody.Builder();
+		Message msg = Message.obtain();
 		params.add("content", news_content.getHtml());
 		params.add("title", news_titie.getText().toString());
-		params.add("newsType", "0");
-		params.add("businesskey", preId);
-		Message msg = Message.obtain();
-		msg.what = 2;
+		if(update != null && "1".equals(update)) {
+			params.add("id", content.getId());
+			msg.what = 3;
+		}else {
+			params.add("newsType", "0");
+			params.add("businesskey", preId);
+			msg.what = 2;
+		}
 		msg.obj = params;
 		file_handler.sendMessage(msg);
 	}
@@ -251,7 +288,12 @@ public class AddNewsActivity extends AppCompatActivity {
 	private void uploadFile(final String path) {
         File file = new File(path);
         Map<String, String> params = new HashMap<String, String>();
-        params.put("preId", preId);
+        if(update != null && "1".equals(update)) {
+        	params.put("id", content.getId());
+        }else {
+        	params.put("preId", preId);
+        }
+        params.put("attachmentType", "1");
         Map<String, String> headers = new HashMap<String, String>();
         headers.put("APP-Key", "APP-Secret222");
         headers.put("APP-Secret", "APP-Secret111");
@@ -260,7 +302,14 @@ public class AddNewsActivity extends AppCompatActivity {
 
         String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/attachment/uploadattachment";
 
-        Log.d("news", path.substring(path.lastIndexOf("/") + 1));
+        final ProgressDialog progressDialog = new ProgressDialog(AddNewsActivity.this);
+		progressDialog.setTitle("文件上传");
+		progressDialog.setMessage("上传进度");
+		//设置水平进度
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		progressDialog.setMax(100);
+		progressDialog.setCancelable(false);
+		progressDialog.show();
         OkHttpUtils.post()//
             .addFile("file", path.substring(path.lastIndexOf("/") + 1), file)//指定接收文件参数名，文件名和文件
             .url(url)
@@ -271,19 +320,32 @@ public class AddNewsActivity extends AppCompatActivity {
 
 				@Override
 				public void onError(Call call, Exception exception, int arg2) {
-					Log.d("news", exception.toString());
+					progressDialog.dismiss();
+					NetworkUtils.showErrorMessage(AddNewsActivity.this, getMessage());
 				}
 
 				@Override
 				public void onResponse(Attachment attachment, int arg1) {
+					progressDialog.dismiss();
 					//设置上传文件的路径
 			        Message msg = Message.obtain();
 			        msg.what = 1;
 			        msg.obj = attachment;
 			        file_handler.sendMessage(msg);
 				}
-            	
+				
+				@Override
+				public void inProgress(float progress, long total, int id) {
+//					super.inProgress(progress, total, id);
+					progressDialog.setProgress((int)(progress * 100));
+				}
             });
         
     }
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ActivityUtils.removeActivities(this);
+	}
 }

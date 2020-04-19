@@ -41,17 +41,23 @@ public class TypeOrderHeadAdapter extends RecyclerView.Adapter<TypeOrderHeadAdap
 
 	@Override
 	public int getItemCount() {
-		return orders.size();
+		return orders.size() + 1;
 	}
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
-		Order order = (Order) orders.get(position);
-		Log.d("news", "order=" + order.toString());
-		String image = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
-		Log.d("news", image);
-		holder.order_head_user.setText(order.getCompany().getCompanyName());
-		Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
+		if(position == orders.size()) {
+			String image = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
+			Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
+			holder.order_head_user.setText("关注更多");
+		}else {
+			Order order = (Order) orders.get(position);
+//			Log.d("news", "order=" + order.toString());
+			String image = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
+//			Log.d("news", image);
+			holder.order_head_user.setText(order.getCompany().getCompanyName());
+			Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
+		}
 	}
 
 	@Override
@@ -63,9 +69,15 @@ public class TypeOrderHeadAdapter extends RecyclerView.Adapter<TypeOrderHeadAdap
 			@Override
 			public void onClick(View v) {
 				int position = viewHolder.getAdapterPosition();
-				Object data = orders.get(position);
-				if(itemListener != null) {
-					itemListener.onItemClick(v, position, data);
+				if(position != orders.size()) {
+					Object data = orders.get(position);
+					if(itemListener != null) {
+						itemListener.onItemClick(v, position, data);
+					}
+				}else {
+					if(itemListener != null) {
+						itemListener.onItemClick(v, position, null);
+					}
 				}
 			}
 		});

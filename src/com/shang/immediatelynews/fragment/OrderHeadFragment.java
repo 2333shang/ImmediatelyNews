@@ -1,48 +1,117 @@
 package com.shang.immediatelynews.fragment;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.xutils.x;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
+import com.cjj.MaterialRefreshLayout;
+import com.cjj.MaterialRefreshListener;
+import com.google.gson.reflect.TypeToken;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.NewsContentActivity;
-import com.shang.immediatelynews.adapter.NewsContentAdapter;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.OrderHeadDialogAdapter;
-import com.shang.immediatelynews.adapter.TopContentAdapter;
-import com.shang.immediatelynews.customview.OrderHeadDialogFragment;
+import com.shang.immediatelynews.adapter.OwnerContentAdapter;
+import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
-import com.shang.immediatelynews.entities.NewsContent;
+import com.shang.immediatelynews.entities.Content;
+import com.shang.immediatelynews.entities.Order;
+import com.shang.immediatelynews.utils.GsonUtils;
+import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.NetworkUtils;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
-@ContentView(R.layout.owner_head_content_layout)
+@ContentView(R.layout.activity_collect)
 public class OrderHeadFragment extends BaseFragment {
 	
-	@ViewInject(R.id.order_head_recyclerview)
+	@ViewInject(R.id.collect_recyclerview)
 	private RecyclerView order_head_recyclerview;
+	@ViewInject(R.id.collect_refresh)
+	private MaterialRefreshLayout order_head_refresh;
 	private int position;
+	private Order order;
+	private List<Content> contents = new ArrayList<Content>();
+	private OrderHeadDialogAdapter orderHeadDialogAdapter;
+	
+	private Handler order_head_handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			switch(msg.what) {
+			case 1:
+				//结束下拉刷新
+				order_head_refresh.finishRefresh();
+				orderHeadDialogAdapter.notifyDataSetChanged();
+				break;
+			case 2:
+				//结束上拉刷新
+				order_head_refresh.finishRefreshLoadMore();
+				Log.d("news", contents.size() + "");
+				orderHeadDialogAdapter.notifyDataSetChanged();
+				break;
+			case 3:
+				order_head_refresh.finishRefresh();
+				order_head_refresh.finishRefreshLoadMore();
+				break;
+			case 4:
+				//设置适配器
+				setAdapter();
+				//设置刷新监听
+				setRefreshListener();
+				break;
+			default:
+				break;
+			}
+		};
+	};
 	
 	@Override
 	public void initFragmentData(Bundle savedInstanceState) {
-		//设置适配器
-		setAdapter();
+		getOrderContent();
 	}
 	
-    public OrderHeadFragment() {
+    private void getOrderContent() {
+    	String companyId = order.getOrderCompany();
+//    	String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1";
+		HttpRequestUtils.getRequest(url, new Callback() {
+			
+			@Override
+			public void onResponse(Call arg0, Response response) throws IOException {
+				contents.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, response.body().string()));
+				order_head_handler.sendEmptyMessage(4);
+			}
+			
+			@Override
+			public void onFailure(Call arg0, IOException arg1) {
+				
+			}
+		});
+	}
+
+	public OrderHeadFragment() {
 		super();
 	}
     
-    public OrderHeadFragment(int position) {
+    public OrderHeadFragment(Order order, int position) {
 		super();
 		this.position = position;
+		this.order = order;
 	}
     
 	@Override
@@ -51,24 +120,77 @@ public class OrderHeadFragment extends BaseFragment {
 	}
 	
 	private void setAdapter() {
-		OrderHeadDialogAdapter adapter = new OrderHeadDialogAdapter(position);
+		orderHeadDialogAdapter = new OrderHeadDialogAdapter(getActivity(), contents);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		order_head_recyclerview.setLayoutManager(layoutManager);
 		order_head_recyclerview.addItemDecoration(new DividerListItemDecoration(getActivity(), DividerListItemDecoration.VERTICAL_LIST));
-		order_head_recyclerview.setAdapter(adapter);
+		order_head_recyclerview.setAdapter(orderHeadDialogAdapter);
 		//设置动画
 		order_head_recyclerview.setItemAnimator(new DefaultItemAnimator());
 		//设置点击事件
-		adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
+		orderHeadDialogAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
 				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-				intent.putExtra("news", (NewsContent)data);
+				intent.putExtra("news", (Content)data);
 				startActivity(intent);
 			}
 		});
-		order_head_recyclerview.setAdapter(adapter);
+	}
+	
+	private void setRefreshListener() {
+//		owner_content_recyclerview_refresh.autoRefresh();//设置自动下拉刷新
+		order_head_refresh.setMaterialRefreshListener(new MaterialRefreshListener() {
+			
+			@Override
+			public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
+				//下拉刷新
+				getNewsOwnerData();
+			}
+			
+			@Override
+	       public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
+	       	  	//上拉刷新
+				getMoreOwnerData();
+	       }
+		});
+	}
+
+	protected void getNewsOwnerData() {
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1";
+		HttpRequestUtils.getRequest(url, new Callback() {
+			
+			@Override
+			public void onResponse(Call arg0, Response response) throws IOException {
+				NetworkUtils.addNewsDataResponse(getActivity(), new TypeToken<List<Content>>(){}, contents, response.body().string(), order_head_handler);
+			}
+			
+			@Override
+			public void onFailure(Call arg0, IOException arg1) {
+				
+			}
+		});
+	}
+
+	protected void getMoreOwnerData() {
+		String companyId = order.getOrderCompany();
+		final String newsId = contents.get(contents.size()-1).getId();
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?history=1&newsId=" + newsId;	
+		HttpRequestUtils.getRequest(url, new Callback() {
+			
+			@Override
+			public void onResponse(Call arg0, Response response) throws IOException {
+				NetworkUtils.addMoreDataResponse(getActivity(), new TypeToken<List<Content>>(){}, contents, response.body().string(), order_head_handler);
+			}
+			
+			@Override
+			public void onFailure(Call arg0, IOException arg1) {
+				
+			}
+		});
 	}
 }

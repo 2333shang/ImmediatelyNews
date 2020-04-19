@@ -1,7 +1,6 @@
 package com.shang.immediatelynews.fragment;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,30 +12,33 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.NewsContentActivity;
+import com.shang.immediatelynews.activity.NewsVideoActivity;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.TopContentAdapter;
+import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
 import com.shang.immediatelynews.entities.Attachment;
 import com.shang.immediatelynews.entities.Top;
 import com.shang.immediatelynews.loader.GlideImageLoader;
+import com.shang.immediatelynews.utils.GsonUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.NetworkUtils;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.listener.OnBannerClickListener;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,12 +70,24 @@ public class TopFragment extends BaseFragment {
 			case 1:
 				//结束下拉刷新
 				top_recyclerview_refresh.finishRefresh();
+				topContentAdapter.notifyDataSetChanged();
 				break;
 			case 2:
 				//结束上拉刷新
 				top_recyclerview_refresh.finishRefreshLoadMore();
 				topContentAdapter.notifyDataSetChanged();
 				break;
+			case 3:
+				top_recyclerview_refresh.finishRefreshLoadMore();
+				top_recyclerview_refresh.finishRefresh();
+			case 4:
+				//设置Banner轮播
+				setBanner(tops.get("1"));
+				//设置RecyclerView的适配器
+				top_recyclerView.setFocusable(false);
+				setRecyclerAdapter(tops.get("0"));
+				//设置刷新监听
+				setRefreshListener();
 			default:
 				break;
 			}
@@ -82,38 +96,23 @@ public class TopFragment extends BaseFragment {
 	
 	@Override
 	public void initFragmentData(Bundle savedInstanceState) {
-		String object = (String) this.getArguments().get("topNews");
-		Gson gson = new GsonBuilder()
-				.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-				.create();
-		Type type = new TypeToken<HashMap<String, List<Top>>>(){}.getType();
-		Log.d("news", object);
-		tops = gson.fromJson(object, type);
-		//设置Banner轮播
-		setBanner(tops.get("1"));
-		//设置RecyclerView的适配器
-		top_recyclerView.setFocusable(false);
-		setRecyclerAdapter(tops.get("0"));
-		//设置刷新监听
-		setRefreshListener();
+		getTopNews();
 	}
 
 	private void setRefreshListener() {
-		top_recyclerview_refresh.autoRefresh();//设置自动下拉刷新
+//		top_recyclerview_refresh.autoRefresh();//设置自动下拉刷新
 //		video_recyclerview_refresh.autoRefreshLoadMore();//设置自动上拉加载
 		top_recyclerview_refresh.setMaterialRefreshListener(new MaterialRefreshListener() {
 			
 			@Override
 			public void onRefresh(MaterialRefreshLayout materialRefreshLayout) {
 				//下拉刷新
-				Toast.makeText(getActivity(), "下拉刷新", 0).show();
-				refresh_handler.sendEmptyMessageDelayed(1, 2000);
+				getNewData();
 			}
 			
 			@Override
 	        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
 	       	  	//上拉刷新
-				Toast.makeText(getActivity(), "上拉刷新", 0).show();
 				getMoreData(tops.get("0").get(tops.get("0").size()-1));
 	       }
 		});
@@ -125,6 +124,7 @@ public class TopFragment extends BaseFragment {
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		top_recyclerView.setLayoutManager(layoutManager);
 		top_recyclerView.setAdapter(topContentAdapter);
+		top_recyclerView.setFocusable(false);
 		top_recyclerView.addItemDecoration(new DividerListItemDecoration(getActivity(),DividerListItemDecoration.VERTICAL_LIST));
 		//设置动画
 		top_recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -133,8 +133,15 @@ public class TopFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-				intent.putExtra("tops", (Top)data);
+				Intent intent = null;
+				Top top = (Top) data;
+				if("1".equals(top.getContent().getNewsType())) {
+					intent = new Intent(getActivity(), NewsVideoActivity.class);
+					intent.putExtra("video", top.getContent());
+				}else {
+					intent = new Intent(getActivity(), NewsContentActivity.class);
+					intent.putExtra("tops", (Top)data);
+				}
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
 			}
@@ -146,17 +153,16 @@ public class TopFragment extends BaseFragment {
 		return x.view().inject(this, inflater, container);
 	}
 	
-	private void setBanner(List<Top> list) {
+	private void setBanner(final List<Top> list) {
 		images = new ArrayList<String>();
 		titles = new ArrayList<String>();
 		for(Top top:list) {
 			List<Attachment> pics = top.getContent().getPics();
-			for(Attachment a:pics) {
-				if(a.getAttachmentType().equals("2")) {
-					images.add("http://192.168.0.105:8080/news/file" + a.getUrl());
-					Log.d("news", "http://192.168.0.105:8080/news/file" + a.getUrl());
-					break;
-				}
+			if(pics != null && !pics.isEmpty()) {
+				images.add(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(0).getUrl());
+			}else {
+				//从网络中下载该图片到本地再加载
+				images.add(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + "/news.jpg");
 			}
 			titles.add(top.getContent().getTitle());
 		}
@@ -184,28 +190,114 @@ public class TopFragment extends BaseFragment {
 			
 			@Override
 			public void OnBannerClick(int position) {
-				Toast.makeText(getActivity(), "hello" + position, Toast.LENGTH_LONG).show();
+				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+				intent.putExtra("tops", list.get(position-1));
+				getActivity().startActivity(intent);
+			}
+		});
+	}
+	
+	private void getTopNews() {
+		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(getActivity(), "数据加载中！");
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/top/seltop";
+		HttpRequestUtils.getRequest(url, new Callback() {
+
+			@Override
+			public void onFailure(Call call, IOException exception) {
+				NetworkUtils.dismissLoading2(showLoading2);
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
+			}
+
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				NetworkUtils.dismissLoading2(showLoading2);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					tops = new HashMap<String, List<Top>>();
+					tops.putAll(GsonUtils.getGsonWithLocalDate(new TypeToken<Map<String, List<Top>>>(){}, object));
+					refresh_handler.sendEmptyMessage(4);
+				}
+			}
+			
+		});
+	}
+	
+	private void getNewData() {
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/top/seltop";
+		HttpRequestUtils.getRequest(url, new Callback() {
+			
+			@Override
+			public void onResponse(Call call, Response response) throws IOException {
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					Map<String, List<Top>> data = GsonUtils.getGsonWithLocalDate(new TypeToken<Map<String, List<Top>>>(){}, object);
+					List<Top> list = data.get("0");
+					Top top_current_new = tops.get("0").get(0);
+					//当前最新新闻比查询得到的新闻时间都要早
+					if(!top_current_new.getId().equals(list.get(0).getId())) {
+						tops.get("0").clear();
+						tops.get("0").addAll(list);
+						refresh_handler.sendEmptyMessage(1);
+					}else {
+						getActivity().runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								Toast.makeText(getActivity(), "没有更新的新闻了！", 0).show();
+								refresh_handler.sendEmptyMessage(3);
+							}
+						});
+					}
+				}
+			}
+			
+			@Override
+			public void onFailure(Call call, IOException exception) {
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
+				refresh_handler.sendEmptyMessage(3);
 			}
 		});
 	}
 	
 	private void getMoreData(Top top) {
-		HttpRequestUtils.getRequest("http://116.62.234.70:8080/news/top/addmore?topId=" + 12, new Callback() {
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/top/addmore?topId=" + top.getId();
+		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				String addmore = response.body().string();
-				Gson gson = new GsonBuilder()
-						.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-						.create();
-				Type type = new TypeToken<List<Top>>(){}.getType();
-				tops.get("0").addAll((List<Top>)gson.fromJson(addmore, type));
-				refresh_handler.sendEmptyMessage(2);
+//				String addmore = response.body().string();
+//				if("login_invalid".equals(addmore)) {
+//					NetworkUtils.toSessionInvalid(getActivity());
+//				}else {
+//					List<Top> data = GsonUtils.getGsonWithLocalDate(new TypeToken<List<Top>>(){}, addmore);
+//					if(data == null || data.isEmpty()) {
+//						getActivity().runOnUiThread(new Runnable() {
+//							
+//							@Override
+//							public void run() {
+//								Toast.makeText(getActivity(), "没有更多的新闻了！", 0).show();
+//								refresh_handler.sendEmptyMessage(3);
+//							}
+//						});
+//					}else {
+//						tops.get("0").addAll(data);
+//						refresh_handler.sendEmptyMessage(2);
+//					}
+//				}
+				NetworkUtils.addMoreDataResponse(getActivity(), new TypeToken<List<Top>>(){}, tops.get("0"), response.body().string(), refresh_handler);
 			}
 			
 			@Override
-			public void onFailure(Call call, IOException response) {
-				
+			public void onFailure(Call call, IOException exception) {
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
+				refresh_handler.sendEmptyMessage(3);
 			}
 		});
 	}

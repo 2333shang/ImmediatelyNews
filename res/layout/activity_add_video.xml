@@ -1,8 +1,12 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    
     <LinearLayout
         android:id="@+id/video_newsbar"
         android:layout_width="match_parent"
@@ -44,23 +48,22 @@
         android:id="@+id/news_video_titie"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:hint="请输入标题!"
-        android:layout_below="@id/video_newsbar"/>
+        android:singleLine="true"
+        android:hint="请输入标题!"/>
     
-    <WebView
+    <VideoView
         android:id="@+id/news_video_content"
         android:layout_width="wrap_content"
         android:layout_height="180dp"
-        android:layout_below="@id/news_video_titie"
-        android:visibility="gone"/>
+        android:visibility="gone"/>	
     
-    <ProgressBar 
+<!--     <ProgressBar 
         android:id="@+id/news_video_progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="?android:attr/progressBarStyleHorizontal"
         android:max="100"
-        android:visibility="gone"/>
+        android:visibility="gone"/> -->
 
     <Button 
         android:id="@+id/news_video_sendbtn"
@@ -68,4 +71,27 @@
         android:layout_height="wrap_content"
         android:text="上传视频"
         android:onClick="selectvideo"/>
+    
+    <TextView 
+        android:id="@+id/news_video_title"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:text="视频封面"
+        android:textColor="#000000"
+        android:visibility="gone"/>
+    
+    <ImageView 
+        android:id="@+id/news_video_img"
+        android:layout_width="wrap_content"
+        android:layout_height="180dp"
+		android:visibility="gone"/>
+    
+    <Button 
+        android:id="@+id/news_video_img_changebtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="更换封面"
+        android:onClick="updateimg"
+        android:visibility="gone"/>
 </LinearLayout>
+</ScrollView>

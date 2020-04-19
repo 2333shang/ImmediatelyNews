@@ -3,68 +3,100 @@ package com.shang.immediatelynews.adapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.R;
-import com.shang.immediatelynews.entities.NewsContent;
+import com.shang.immediatelynews.adapter.CollectAdapter.ViewHolder;
+import com.shang.immediatelynews.constant.FileUploadConstant;
+import com.shang.immediatelynews.entities.Attachment;
+import com.shang.immediatelynews.entities.Collect;
+import com.shang.immediatelynews.entities.Content;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class OrderHeadDialogAdapter extends RecyclerView.Adapter<OrderHeadDialogAdapter.ViewHolder>{
 	
-	private List<NewsContent> newsContents = new ArrayList<NewsContent>();
-	private int position;
+	private Context context;
+	private List<Content> contents;
 	
-	{
-		String absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
-		for(int i = 0; i<7 ; i++) {
-			String content = "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n";
-			content += "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i + "\n" + "content" + i;
-			NewsContent newsContent = new NewsContent("title" + i, absolutePath, null, content);
-			newsContent.setAuthorType("游戏作者");
-			newsContents.add(newsContent);
-		}
-	}
-	
-    public OrderHeadDialogAdapter() {
+	public OrderHeadDialogAdapter(Context context, List<Content> contents) {
 		super();
-	}
-    
-    public OrderHeadDialogAdapter(int position) {
-		super();
-		this.position = position;
-		initUsername();
-	}
-	static class ViewHolder extends RecyclerView.ViewHolder{
-
-		private View view;
-//		private ImageView gridimage;
-		private TextView top_content_content;
-		public ViewHolder(View itemView) {
-			super(itemView);
-			view = itemView;
-//			gridimage = (ImageView) itemView.findViewById(R.id.gridimage);
-			top_content_content = (TextView) itemView.findViewById(R.id.top_content_content);
-		}
+		this.context = context;
+		this.contents = contents;
 	}
 
 	@Override
 	public int getItemCount() {
-		return newsContents.size();
+		return contents.size();
 	}
 
+	static class ViewHolder extends RecyclerView.ViewHolder{
+
+		private View view;
+		private TextView collect_detail_title;
+		private List<ImageView> collect_detail_contents;
+		private JCVideoPlayerStandard collect_detail_video;
+		private LinearLayout collect_detail_content_head;
+		private LinearLayout collect_detail_video_head;
+		public ViewHolder(View itemView) {
+			super(itemView);
+			view = itemView;
+			collect_detail_video = (JCVideoPlayerStandard) itemView.findViewById(R.id.collect_detail_video);
+			collect_detail_title = (TextView) itemView.findViewById(R.id.collect_detail_title);
+			collect_detail_contents = new ArrayList<ImageView>();
+			ImageView collect_detail_content_1 = (ImageView) itemView.findViewById(R.id.collect_detail_content_1);
+			ImageView collect_detail_content_2 = (ImageView) itemView.findViewById(R.id.collect_detail_content_2);
+			ImageView collect_detail_content_3 = (ImageView) itemView.findViewById(R.id.collect_detail_content_3);
+			collect_detail_contents.add(collect_detail_content_1);
+			collect_detail_contents.add(collect_detail_content_2);
+			collect_detail_contents.add(collect_detail_content_3);
+			collect_detail_content_head = (LinearLayout) itemView.findViewById(R.id.collect_detail_content_head);
+			collect_detail_video_head = (LinearLayout) itemView.findViewById(R.id.collect_detail_video_head);
+		}
+		
+	}
+	
 	@Override
-	public void onBindViewHolder(ViewHolder holder, int position) {
-		NewsContent newsContent = newsContents.get(position);
-		holder.top_content_content.setText(newsContent.getTitle() + ":" + newsContent.getAuthorName());
-//		holder.gridimage.setImageResource(R.drawable.ic_launcher);
+	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
+		Content content = contents.get(position);
+		viewHolder.collect_detail_title.setText(content.getTitle());
+		if("0".equals(content.getNewsType())){
+			List<Attachment> pics = content.getPics();
+			if(!pics.isEmpty()) {
+				viewHolder.collect_detail_content_head.setVisibility(View.VISIBLE);
+				for(int i=0; i<pics.size(); i++) {
+					final ImageView imageView = viewHolder.collect_detail_contents.get(i);
+					Glide.with(context).asBitmap().load(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl()).into(new SimpleTarget<Bitmap>() {
+						
+						@Override
+						public void onResourceReady(Bitmap bm, Transition<? super Bitmap> arg1) {
+							imageView.setImageBitmap(bm);
+						}
+					});
+					if(i == 2) {
+						break;
+					}
+				}
+			}
+		}else{
+			viewHolder.collect_detail_video_head.setVisibility(View.VISIBLE);
+			viewHolder.collect_detail_video.setUp(Environment.getExternalStorageDirectory()+"/shenxiaoai.mp4", content.getTitle());
+		}
 	}
 
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewTtpe) {
-		View view = View.inflate(parent.getContext(), R.layout.top_content_layout, null);
+		View view = View.inflate(parent.getContext(), R.layout.activity_collect_detail, null);
 		final ViewHolder viewHolder = new ViewHolder(view);
 		viewHolder.view.setOnClickListener(new View.OnClickListener() {
 			
@@ -72,22 +104,16 @@ public class OrderHeadDialogAdapter extends RecyclerView.Adapter<OrderHeadDialog
 			public void onClick(View v) {
 				int position = viewHolder.getAdapterPosition();
 				if(itemListener != null) {
-					itemListener.onItemClick(v, position, newsContents.get(position));
+					itemListener.onItemClick(v, position, contents.get(position));
 				}
 			}
 		});
 		return viewHolder;
 	}
-
+	
 	private OnRecyclerViewItemClickListener itemListener;
 
 	public void setOnItemClickListener(OnRecyclerViewItemClickListener itemListener) {
 		this.itemListener = itemListener;
-	}
-
-	private void initUsername(){
-		for(NewsContent content:newsContents) {
-			content.setAuthorName("username" + position);
-		}
 	}
 }

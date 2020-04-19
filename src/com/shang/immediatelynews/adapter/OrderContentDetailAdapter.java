@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.constant.FileUploadConstant;
@@ -82,10 +82,10 @@ public class OrderContentDetailAdapter extends RecyclerView.Adapter<OrderContent
 				viewHolder.order_content_detail_content_head.setVisibility(View.VISIBLE);
 				for(int i=0; i<pics.size(); i++) {
 					final ImageView imageView = viewHolder.order_content_detail_contents.get(i);
-					Glide.with(context).load(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl()).asBitmap().into(new SimpleTarget<Bitmap>() {
+					Glide.with(context).asBitmap().load(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl()).into(new SimpleTarget<Bitmap>() {
 						
 						@Override
-						public void onResourceReady(Bitmap bm, GlideAnimation<? super Bitmap> arg1) {
+						public void onResourceReady(Bitmap bm, Transition<? super Bitmap> arg1) {
 							imageView.setImageBitmap(bm);
 						}
 					});

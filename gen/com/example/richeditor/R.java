@@ -8,55 +8,55 @@ package com.example.richeditor;
 
 public final class R {
 	public static final class drawable {
-		public static final int bg = 0x7f02003b;
-		public static final int bg_color = 0x7f02003c;
-		public static final int blockquote = 0x7f02003e;
-		public static final int bold = 0x7f02003f;
-		public static final int h1 = 0x7f02004a;
-		public static final int h2 = 0x7f02004b;
-		public static final int h3 = 0x7f02004c;
-		public static final int h4 = 0x7f02004d;
-		public static final int h5 = 0x7f02004e;
-		public static final int h6 = 0x7f02004f;
-		public static final int html_edit = 0x7f020050;
-		public static final int ic_launcher = 0x7f02005d;
-		public static final int indent = 0x7f02005e;
-		public static final int insert_image = 0x7f02005f;
-		public static final int insert_link = 0x7f020060;
-		public static final int italic = 0x7f020061;
-		public static final int justify_center = 0x7f02007c;
-		public static final int justify_left = 0x7f02007d;
-		public static final int justify_right = 0x7f02007e;
-		public static final int outdent = 0x7f020082;
-		public static final int redo = 0x7f02008c;
-		public static final int strikethrough = 0x7f020091;
-		public static final int subscript = 0x7f020092;
-		public static final int superscript = 0x7f020093;
-		public static final int txt_color = 0x7f020094;
-		public static final int underline = 0x7f020095;
-		public static final int undo = 0x7f020096;
+		public static final int bg = 0x7f02003c;
+		public static final int bg_color = 0x7f02003d;
+		public static final int blockquote = 0x7f02003f;
+		public static final int bold = 0x7f020040;
+		public static final int h1 = 0x7f02004b;
+		public static final int h2 = 0x7f02004c;
+		public static final int h3 = 0x7f02004d;
+		public static final int h4 = 0x7f02004e;
+		public static final int h5 = 0x7f02004f;
+		public static final int h6 = 0x7f020050;
+		public static final int html_edit = 0x7f020051;
+		public static final int ic_launcher = 0x7f02005e;
+		public static final int indent = 0x7f02005f;
+		public static final int insert_image = 0x7f020060;
+		public static final int insert_link = 0x7f020061;
+		public static final int italic = 0x7f020062;
+		public static final int justify_center = 0x7f02007d;
+		public static final int justify_left = 0x7f02007e;
+		public static final int justify_right = 0x7f02007f;
+		public static final int outdent = 0x7f020087;
+		public static final int redo = 0x7f020091;
+		public static final int strikethrough = 0x7f020096;
+		public static final int subscript = 0x7f020097;
+		public static final int superscript = 0x7f020098;
+		public static final int txt_color = 0x7f020099;
+		public static final int underline = 0x7f02009a;
+		public static final int undo = 0x7f02009b;
 	}
 	public static final class id {
-		public static final int action_align_center = 0x7f0e0079;
-		public static final int action_align_left = 0x7f0e0078;
-		public static final int action_align_right = 0x7f0e007a;
-		public static final int action_bold = 0x7f0e0074;
-		public static final int action_insert_image = 0x7f0e007b;
-		public static final int action_italic = 0x7f0e0075;
-		public static final int action_redo = 0x7f0e0073;
-		public static final int action_strikethrough = 0x7f0e0076;
-		public static final int action_underline = 0x7f0e0077;
-		public static final int action_undo = 0x7f0e0072;
+		public static final int action_align_center = 0x7f0f0079;
+		public static final int action_align_left = 0x7f0f0078;
+		public static final int action_align_right = 0x7f0f007a;
+		public static final int action_bold = 0x7f0f0074;
+		public static final int action_insert_image = 0x7f0f007b;
+		public static final int action_italic = 0x7f0f0075;
+		public static final int action_redo = 0x7f0f0073;
+		public static final int action_strikethrough = 0x7f0f0076;
+		public static final int action_underline = 0x7f0f0077;
+		public static final int action_undo = 0x7f0f0072;
 	}
 	public static final class layout {
 		public static final int activity_main = 0x7f04001e;
 	}
 	public static final class string {
-		public static final int app_name = 0x7f070000;
-		public static final int hello_world = 0x7f070001;
+		public static final int app_name = 0x7f080000;
+		public static final int hello_world = 0x7f080001;
 	}
 	public static final class style {
-		public static final int AppBaseTheme = 0x7f080000;
-		public static final int AppTheme = 0x7f080001;
+		public static final int AppBaseTheme = 0x7f090000;
+		public static final int AppTheme = 0x7f090001;
 	}
 }

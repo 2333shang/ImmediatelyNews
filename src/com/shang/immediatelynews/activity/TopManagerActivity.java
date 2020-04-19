@@ -7,18 +7,18 @@ import org.xutils.x;
 import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
+import com.shang.immediatelynews.BaseActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.adapter.TopManagerTabAdapter;
-import com.shang.immediatelynews.fragment.NewsManagerFragment;
 import com.shang.immediatelynews.fragment.TopManagerFragment;
+import com.shang.immediatelynews.utils.ActivityUtils;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 
 @ContentView(R.layout.activity_top_manager)
-public class TopManagerActivity extends AppCompatActivity {
+public class TopManagerActivity extends BaseActivity {
 
 	@ViewInject(R.id.top_manager_tab)
 	private TabLayout top_manager_tab;
@@ -31,6 +31,7 @@ public class TopManagerActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		x.view().inject(this);
+		ActivityUtils.addActivities(this);
 		 //初始化数据
         fragments = new ArrayList<TopManagerFragment>();
         fragments.add(new TopManagerFragment("未处理", "0"));
@@ -45,5 +46,11 @@ public class TopManagerActivity extends AppCompatActivity {
 //      tabLayout.setTabMode(TabLayout.MODE_FIXED);
          //设置滚动的
         top_manager_tab.setTabMode(TabLayout.MODE_SCROLLABLE);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		ActivityUtils.removeActivities(this);
 	}
 }

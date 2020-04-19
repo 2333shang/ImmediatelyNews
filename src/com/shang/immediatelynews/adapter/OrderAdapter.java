@@ -1,12 +1,18 @@
 package com.shang.immediatelynews.adapter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
 import com.shang.immediatelynews.R;
+import com.shang.immediatelynews.activity.OrderActivity;
+import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Order;
+import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.NetworkUtils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +22,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
@@ -51,21 +60,49 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder viewHolder, int postiopn) {
-		Order order = orders.get(postiopn);
+	public void onBindViewHolder(final ViewHolder viewHolder, int postiopn) {
+		final Order order = orders.get(postiopn);
 		viewHolder.order_detail_companyname.setText(order.getCompany().getCompanyName());
 		viewHolder.order_detail_content_title.setText("最新新闻！");
 		Glide.with(context).load(Environment.getExternalStorageDirectory() + "/first.jpg").into(viewHolder.order_detail_headicon);
+//		viewHolder.order_btn.setText("取消关注");
 		viewHolder.order_btn.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Button btn = (Button)v;
-				if(btn.getText().toString().equals("已关注")) {
-					btn.setText("+关注");
+				String companyId = order.getOrderCompany();
+				String url;
+				if("取消关注".equals(viewHolder.order_btn.getText())) {	
+					url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/order/cancelorder?companyId=" + companyId;
 				}else {
-					btn.setText("已关注");
+					url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/order/order?companyId=" + companyId;
 				}
+				HttpRequestUtils.getRequest(url, new Callback() {
+					
+					@Override
+					public void onResponse(Call arg0, Response response) throws IOException {
+						((Activity)context).runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								if("取消关注".equals(viewHolder.order_btn.getText())) {
+									viewHolder.order_btn.setText("+关注");
+								}else {
+									viewHolder.order_btn.setText("取消关注");
+								}
+//								int position = viewHolder.getAdapterPosition();
+//								orders.remove(position);
+//								notifyDataSetChanged();
+							}
+						});
+					}
+					
+					@Override
+					public void onFailure(Call arg0, IOException arg1) {
+						OrderActivity activity = (OrderActivity) context;
+						NetworkUtils.showErrorMessage(activity, activity.getMessage());
+					}
+				});
 			}
 		});
 	}

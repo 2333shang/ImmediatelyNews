@@ -1,28 +1,32 @@
 package com.shang.immediatelynews.adapter;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.shang.immediatelynews.R;
+import com.shang.immediatelynews.activity.OrderActivity;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Attachment;
-import com.shang.immediatelynews.entities.NewsContent;
 import com.shang.immediatelynews.entities.Top;
+import com.shang.immediatelynews.utils.GlideUtils;
+import com.shang.immediatelynews.utils.HttpRequestUtils;
+import com.shang.immediatelynews.utils.NetworkUtils;
 
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class TopContentAdapter extends RecyclerView.Adapter<TopContentAdapter.ViewHolder>{
 	
@@ -70,24 +74,18 @@ public class TopContentAdapter extends RecyclerView.Adapter<TopContentAdapter.Vi
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder holder, int position) {
-		Top top = topNews.get(position);
+	public void onBindViewHolder(final ViewHolder holder, int position) {
+		final Top top = topNews.get(position);
 		holder.top_content_content.setText(top.getContent().getTitle());
 		holder.top_user.setText(top.getContent().getAuthorName());
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		holder.top_time.setText(dateFormat.format(top.getContent().getSendtime()));
 		List<Attachment> pics = top.getContent().getPics();
-		if(!pics.isEmpty()) {
+		if(pics != null && !pics.isEmpty()) {
 			holder.top_linearlayout.setVisibility(View.VISIBLE);
 			for(int i=0; i<pics.size(); i++) {
-				final ImageView imageView = holder.top_content_view.get(i);
-				Glide.with(context).load(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl()).asBitmap().into(new SimpleTarget<Bitmap>() {
-
-					@Override
-					public void onResourceReady(Bitmap bm, GlideAnimation<? super Bitmap> arg1) {
-						imageView.setImageBitmap(bm);
-					}
-				});
+				ImageView imageView = holder.top_content_view.get(i);
+				GlideUtils.loadImage(context, imageView, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl());
 				if(i == 2) {
 					break;
 				}
