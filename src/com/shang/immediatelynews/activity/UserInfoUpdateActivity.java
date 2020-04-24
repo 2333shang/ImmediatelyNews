@@ -31,6 +31,7 @@ import com.zhy.http.okhttp.OkHttpUtils;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -90,7 +91,47 @@ public class UserInfoUpdateActivity extends BaseActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case 1:
-				setUserInfo();
+//				setUserInfo();
+				FormBody.Builder params = new Builder();
+				if(user.getHeadIcon() != null && user.getHeadIcon().getBusinesskey().equals(preId)) {
+					params.add("businesskey", preId);
+				}
+				params.add("id", user.getId());
+				String username = user_update_name.getText().toString();
+				if(!user.getUsername().equals(username)) {
+					user.setUsername(username);
+					params.add("username", username);
+				}
+				params.add("gender", user.getGender());
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				params.add("birthdate", format.format((user.getBirthdate())));
+				String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/user/userupdate";
+				HttpRequestUtils.getPost(url, params, new okhttp3.Callback() {
+					
+					@Override
+					public void onResponse(Call arg0, Response response) throws IOException {
+						String object = response.body().string();
+						if("login_invalid".equals(object)) {
+							NetworkUtils.toSessionInvalid(UserInfoUpdateActivity.this);
+						}else {
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									Intent data = new Intent();
+									data.putExtra("updateuser", user);
+									setResult(2, data);
+									finish();
+								}
+							});
+						}
+					}
+					
+					@Override
+					public void onFailure(Call arg0, IOException arg1) {
+						NetworkUtils.showErrorMessage(UserInfoUpdateActivity.this, getMessage());
+					}
+				});
 				break;
 
 			default:
@@ -236,7 +277,8 @@ public class UserInfoUpdateActivity extends BaseActivity {
 				}else {
 					path = getPath(this, uri);
 				}
-				uploadFile(path);
+//				uploadFile(path);
+				GlideUtils.loadImage(UserInfoUpdateActivity.this, user_update_headicon, path);
 			}
 			break;
 		case 1:
@@ -244,7 +286,9 @@ public class UserInfoUpdateActivity extends BaseActivity {
 				try {
 //					Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
 //					user_update_headicon.setImageBitmap(bitmap);
-					uploadFile(getExternalFilesDir(null).getAbsolutePath()+"/headicon.jpg");
+//					uploadFile(getExternalFilesDir(null).getAbsolutePath()+"/headicon.jpg");
+					path = getExternalFilesDir(null).getAbsolutePath()+"/headicon.jpg";
+					GlideUtils.loadImage(UserInfoUpdateActivity.this, user_update_headicon, path);
 //					Attachment a = new Attachment();
 //					a.setUrl(getExternalFilesDir(null).getAbsolutePath(),"headicon.jpg");
 //					user.setHeadIcon(headIcon);
@@ -375,6 +419,7 @@ public class UserInfoUpdateActivity extends BaseActivity {
 		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH
 				+ "/attachment/uploadattachment";
 
+		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(UserInfoUpdateActivity.this, "消息更新中!");
 		OkHttpUtils.post()//
 				.addFile("file", path.substring(path.lastIndexOf("/") + 1), file)// 指定接收文件参数名，文件名和文件
 				.url(url).params(params)// 设置参数
@@ -387,17 +432,19 @@ public class UserInfoUpdateActivity extends BaseActivity {
 
 					@Override
 					public void onError(Call call, Exception exception, int arg2) {	
+						NetworkUtils.dismissLoading2(showLoading2);
 						NetworkUtils.showErrorMessage(UserInfoUpdateActivity.this, getMessage());
 					}
 
 					@Override
 					public void onResponse(final Attachment attachment, int arg1) {
+						NetworkUtils.dismissLoading2(showLoading2);
 						runOnUiThread(new Runnable() {
 								
 							@Override
 							public void run() {
-								GlideUtils.loadImage(UserInfoUpdateActivity.this, user_update_headicon, attachment.getUrl());
 								user.setHeadIcon(attachment);
+								user_handler.sendEmptyMessage(1);
 							}
 						});
 					}
@@ -422,43 +469,7 @@ public class UserInfoUpdateActivity extends BaseActivity {
 	}
 
 	public void submit(View v) {
-		FormBody.Builder params = new Builder();
-		Log.d("news", "upuser" + user.toString());
-		if(user.getHeadIcon() != null && user.getHeadIcon().getBusinesskey().equals(preId)) {
-			Log.d("news", "111:	" + preId);
-			params.add("businesskey", preId);
-		}
-		params.add("id", user.getId());
-		String username = user_update_name.getText().toString();
-		if(!user.getUsername().equals(username)) {
-			user.setUsername(username);
-			params.add("username", username);
-		}
-		params.add("gender", user.getGender());
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		params.add("birthdate", format.format((user.getBirthdate())));
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/user/userupdate";
-		HttpRequestUtils.getPost(url, params, new Callback() {
-			
-			@Override
-			public void onResponse(Call arg0, Response response) throws IOException {
-				runOnUiThread(new Runnable() {
-					
-					@Override
-					public void run() {
-						Intent data = new Intent();
-						data.putExtra("updateuser", user);
-						setResult(2, data);
-						finish();
-					}
-				});
-			}
-			
-			@Override
-			public void onFailure(Call arg0, IOException arg1) {
-				
-			}
-		});
+		uploadFile(path);
 	}
 
 	public void cancel(View v) {

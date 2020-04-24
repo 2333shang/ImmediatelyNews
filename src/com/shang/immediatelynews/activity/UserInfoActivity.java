@@ -86,8 +86,13 @@ public class UserInfoActivity extends BaseActivity {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				NetworkUtils.dismissLoading2(showLoading2);
-				user = GsonUtils.getGsonWithLocalDate(new TypeToken<User>(){}, response.body().string());
-				user_handler.sendEmptyMessage(1);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(UserInfoActivity.this);
+				}else {
+					user = GsonUtils.getGsonWithLocalDate(new TypeToken<User>(){}, object);
+					user_handler.sendEmptyMessage(1);
+				}
 			}
 			
 			@Override
@@ -114,7 +119,6 @@ public class UserInfoActivity extends BaseActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode ==1 & resultCode == 2) {
 			User user = (User) data.getSerializableExtra("updateuser");
-			Log.d("news", "users=" + user.toString());
 			if(!user_name.getText().toString().equals(user.getUsername())) {
 				user_name.setText(user.getUsername());
 			}

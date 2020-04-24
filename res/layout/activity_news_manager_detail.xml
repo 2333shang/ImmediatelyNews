@@ -21,6 +21,17 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"/>
 	    
+	    <TextView
+	        android:id="@+id/news_manager_empty"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="15dp"
+	        android:layout_marginTop="15dp"
+	        android:text="没有发现任何新闻!!!"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:textSize="12pt" 
+	        android:visibility="gone"/>
+	    
 	</com.cjj.MaterialRefreshLayout>
-    
+ 
 </RelativeLayout>

@@ -5,50 +5,56 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/user_newsbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#000000"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/user_add_cancel"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="cancel"
+            android:text="返回"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            android:gravity="center"
+            android:text="个人信息"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/user_add_submit"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:onClick="update"
+            android:text="修改"
+            android:textColor="#ffffff"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/user_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
-
-        <LinearLayout
-            android:id="@+id/user_newsbar"
-            android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:background="#000000"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/user_add_cancel"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:onClick="cancel"
-                android:text="取消"
-                android:textColor="#ffffff" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="5"
-                android:gravity="center"
-                android:text="个人信息"
-                android:textColor="#ffffff" />
-
-            <TextView
-                android:id="@+id/user_add_submit"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:onClick="update"
-                android:text="修改"
-                android:textColor="#ffffff" />
-        </LinearLayout>
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp" >
+            android:layout_height="50dp"
+            android:layout_margin="5dp" >
 
             <TextView
                 android:id="@+id/user_headicon_text"
@@ -73,7 +79,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@id/user_headicon_last"
-                android:gravity="end"/>
+                android:gravity="end" />
         </RelativeLayout>
 
         <View
@@ -83,7 +89,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp" >
+            android:layout_height="30dp"
+            android:layout_margin="5dp" >
 
             <TextView
                 android:id="@+id/user_name_text"
@@ -119,7 +126,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_gravity="center" >
+            android:layout_gravity="center"
+            android:layout_margin="5dp" >
 
             <TextView
                 android:id="@+id/user_gender_text"
@@ -155,7 +163,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="30dp"
-            android:layout_gravity="center" >
+            android:layout_gravity="center"
+            android:layout_margin="5dp" >
 
             <TextView
                 android:id="@+id/user_birth_text"
@@ -190,7 +199,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="30dp" >
+            android:layout_height="30dp"
+            android:layout_margin="5dp" >
 
             <TextView
                 android:id="@+id/user_company_text"

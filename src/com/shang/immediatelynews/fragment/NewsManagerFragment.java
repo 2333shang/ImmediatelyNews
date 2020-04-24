@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.NewsContentActivity;
 import com.shang.immediatelynews.activity.NewsManagerActivity;
+import com.shang.immediatelynews.activity.NewsVideoActivity;
 import com.shang.immediatelynews.adapter.NewsManagerAdapter;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.constant.FileUploadConstant;
@@ -25,6 +26,7 @@ import com.shang.immediatelynews.utils.NetworkUtils;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +37,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -60,6 +63,8 @@ public class NewsManagerFragment extends BaseFragment {
 	private RecyclerView news_manager_recycler;
 	@ViewInject(R.id.news_manager_refresh)
 	private MaterialRefreshLayout news_manager_refresh;
+	@ViewInject(R.id.news_manager_empty)
+	private TextView news_manager_empty;
 	
 	private Handler news_manager_handler = new Handler() {
 		
@@ -106,6 +111,11 @@ public class NewsManagerFragment extends BaseFragment {
 	}
 
 	protected void setNewsManagerAdapter() {
+		if(contents.size() == 0) {
+			news_manager_empty.setVisibility(View.VISIBLE);
+			news_manager_recycler.setVisibility(View.GONE);
+			return;
+		}
 		adapter = new NewsManagerAdapter(this, getActivity(), newType, contents, type);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -118,8 +128,14 @@ public class NewsManagerFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-				intent.putExtra("news", (Content) data);
+				Intent intent = null;
+				if("1".equals(newType)) {
+					intent = new Intent(getActivity(), NewsVideoActivity.class);
+					intent.putExtra("video", (Content)data);
+				}else {
+					intent = new Intent(getActivity(), NewsContentActivity.class);
+					intent.putExtra("news", (Content)data);
+				}
 				startActivity(intent);
 			}
 		});
@@ -130,17 +146,18 @@ public class NewsManagerFragment extends BaseFragment {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == 1 && resultCode == 2) {
-			String title = data.getStringExtra("updatetitle");
-			String content = data.getStringExtra("updatecontent");
-			String id = data.getStringExtra("updateid");
-			for(Content c:contents) {
-				if(c.getId().equals(id)) {
-					c.setContent(content);
-					c.setTitle(title);
-					break;
-				}
-			}
-			adapter.notifyDataSetChanged();
+			news_manager_refresh.autoRefresh();
+//			String title = data.getStringExtra("updatetitle");
+//			String content = data.getStringExtra("updatecontent");
+//			String id = data.getStringExtra("updateid");
+//			for(Content c:contents) {
+//				if(c.getId().equals(id)) {
+//					c.setContent(content);
+//					c.setTitle(title);
+//					break;
+//				}
+//			}
+//			adapter.notifyDataSetChanged();
 		}
 	}
 	
@@ -160,16 +177,20 @@ public class NewsManagerFragment extends BaseFragment {
 			history = "1";
 		}
 		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?newsType=" + newType + "&history=" + history;
-		Log.d("news", "url=" + url);
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				NetworkUtils.dismissLoading2(showLoading2);
-				if(contents.isEmpty()) {
-					contents.addAll((List<Content>)GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, response.body().string()));
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					if(contents.isEmpty()) {
+						contents.addAll((List<Content>)GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, object));
+					}
+					news_manager_handler.sendEmptyMessage(4);
 				}
-				news_manager_handler.sendEmptyMessage(4);
 			}
 			
 			@Override

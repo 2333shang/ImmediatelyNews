@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import okhttp3.Call;
 import okhttp3.FormBody;
@@ -50,6 +51,8 @@ public class AddNewsActivity extends BaseActivity {
 	private RichEditor news_content;
 	@ViewInject(R.id.news_titie)
 	private EditText news_titie;
+	@ViewInject(R.id.add_news_icon_head)
+	private LinearLayout add_news_icon_head;
 	private String preId;
 	private String update;
 	private Content content;
@@ -61,7 +64,6 @@ public class AddNewsActivity extends BaseActivity {
 		switch (msg.what) {
 		case 1:
 			Attachment attachment = (Attachment) msg.obj;
-			Log.d("news", attachment.getUrl());
 			news_content.insertImage(attachment.getUrl(), "picvision\" style=\"max-width:100%");
 			break;
 		case 2:
@@ -71,13 +73,24 @@ public class AddNewsActivity extends BaseActivity {
 				
 				@Override
 				public void onResponse(Call call, Response response) throws IOException {
-					Log.d("news", "上传成功！");
-					finish();
+					String object = response.body().string();
+					if("login_invalid".equals(object)) {
+						NetworkUtils.toSessionInvalid(AddNewsActivity.this);
+					}else {
+						runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								Toast.makeText(AddNewsActivity.this, "发布成功!", 0).show();
+								finish();
+							}
+						});
+					}
 				}
 				
 				@Override
 				public void onFailure(Call call, IOException response) {
-					
+					NetworkUtils.showErrorMessage(AddNewsActivity.this, getMessage());
 				}
 			});
 			break;
@@ -88,18 +101,29 @@ public class AddNewsActivity extends BaseActivity {
 				
 				@Override
 				public void onResponse(Call call, Response response) throws IOException {
-					Log.d("news", "更新成功！" + response.body().string());
-					Intent data = new Intent();
-					data.putExtra("updateid", content.getId());
-					data.putExtra("updatetitle", news_titie.getText().toString());
-					data.putExtra("updatecontent", news_content.getHtml());
-					setResult(2, data);
-					finish();
+					String object = response.body().string();
+					if("login_invalid".equals(object)) {
+						NetworkUtils.toSessionInvalid(AddNewsActivity.this);
+					}else {
+						runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								Toast.makeText(AddNewsActivity.this, "更新成功!", 0).show();
+//								Intent data = new Intent();
+//								data.putExtra("updateid", content.getId());
+//								data.putExtra("updatetitle", news_titie.getText().toString());
+//								data.putExtra("updatecontent", news_content.getHtml());
+								setResult(2);
+								finish();
+							}
+						});
+					}
 				}
 				
 				@Override
 				public void onFailure(Call call, IOException response) {
-					
+					NetworkUtils.showErrorMessage(AddNewsActivity.this, getMessage());
 				}
 			});
 			break;
@@ -128,6 +152,17 @@ public class AddNewsActivity extends BaseActivity {
 		}else {
 			preId = UUID.randomUUID().toString().replaceAll("-", "");
 		}
+		news_titie.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if(hasFocus) {
+					add_news_icon_head.setVisibility(View.GONE);
+				}else {
+					add_news_icon_head.setVisibility(View.VISIBLE);
+				}
+			}
+		});
 		news_content.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
 			@Override
 			public void onTextChange(String text) {
@@ -269,6 +304,14 @@ public class AddNewsActivity extends BaseActivity {
 	}
 	
 	public void submit(View v) {
+		if(news_content.getHtml() == null || news_content.getHtml().equals("")) {
+			Toast.makeText(this, "请输入新闻内容", 0).show();
+			return;
+		}
+		if(news_titie.getText().toString() == null || news_titie.getText().toString().equals("")) {
+			Toast.makeText(this, "请输入新闻标题", 0).show();
+			return;
+		}
 		FormBody.Builder params=new FormBody.Builder();
 		Message msg = Message.obtain();
 		params.add("content", news_content.getHtml());

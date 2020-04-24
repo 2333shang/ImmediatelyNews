@@ -22,6 +22,7 @@ import com.shang.immediatelynews.adapter.TopContentAdapter;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
 import com.shang.immediatelynews.entities.Attachment;
+import com.shang.immediatelynews.entities.Content;
 import com.shang.immediatelynews.entities.Top;
 import com.shang.immediatelynews.loader.GlideImageLoader;
 import com.shang.immediatelynews.utils.GsonUtils;
@@ -39,6 +40,7 @@ import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +73,7 @@ public class TopFragment extends BaseFragment {
 				//结束下拉刷新
 				top_recyclerview_refresh.finishRefresh();
 				topContentAdapter.notifyDataSetChanged();
+				setBanner(tops.get("1"));
 				break;
 			case 2:
 				//结束上拉刷新
@@ -80,14 +83,16 @@ public class TopFragment extends BaseFragment {
 			case 3:
 				top_recyclerview_refresh.finishRefreshLoadMore();
 				top_recyclerview_refresh.finishRefresh();
+				setBanner(tops.get("1"));
+				break;
 			case 4:
 				//设置Banner轮播
 				setBanner(tops.get("1"));
 				//设置RecyclerView的适配器
-				top_recyclerView.setFocusable(false);
 				setRecyclerAdapter(tops.get("0"));
 				//设置刷新监听
 				setRefreshListener();
+				break;
 			default:
 				break;
 			}
@@ -124,7 +129,6 @@ public class TopFragment extends BaseFragment {
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		top_recyclerView.setLayoutManager(layoutManager);
 		top_recyclerView.setAdapter(topContentAdapter);
-		top_recyclerView.setFocusable(false);
 		top_recyclerView.addItemDecoration(new DividerListItemDecoration(getActivity(),DividerListItemDecoration.VERTICAL_LIST));
 		//设置动画
 		top_recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -137,7 +141,9 @@ public class TopFragment extends BaseFragment {
 				Top top = (Top) data;
 				if("1".equals(top.getContent().getNewsType())) {
 					intent = new Intent(getActivity(), NewsVideoActivity.class);
-					intent.putExtra("video", top.getContent());
+					Content content = top.getContent();
+					content.setId(top.getNewsId());
+					intent.putExtra("video", content);
 				}else {
 					intent = new Intent(getActivity(), NewsContentActivity.class);
 					intent.putExtra("tops", (Top)data);
@@ -159,10 +165,18 @@ public class TopFragment extends BaseFragment {
 		for(Top top:list) {
 			List<Attachment> pics = top.getContent().getPics();
 			if(pics != null && !pics.isEmpty()) {
-				images.add(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(0).getUrl());
+				if(top.getContent().getNewsType().equals("0")) {
+					images.add(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(0).getUrl());
+				}else if(top.getContent().getNewsType().equals("1")) {
+					for(Attachment a: pics) {
+						if(a.getAttachmentType().equals("2")) {
+							images.add(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + a.getUrl());
+						}
+					}
+				}
 			}else {
 				//从网络中下载该图片到本地再加载
-				images.add(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + "/news.jpg");
+				images.add(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + FileUploadConstant.FILE_DEFAULT_HEAD);
 			}
 			titles.add(top.getContent().getTitle());
 		}
@@ -190,8 +204,15 @@ public class TopFragment extends BaseFragment {
 			
 			@Override
 			public void OnBannerClick(int position) {
-				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-				intent.putExtra("tops", list.get(position-1));
+				Top top = list.get(position - 1);
+				Intent intent = null;
+				if("1".equals(top.getContent().getNewsType())) {
+					intent = new Intent(getActivity(), NewsVideoActivity.class);
+					intent.putExtra("video", top.getContent());
+				}else {
+					intent = new Intent(getActivity(), NewsContentActivity.class);
+					intent.putExtra("tops", top);
+				}
 				getActivity().startActivity(intent);
 			}
 		});
@@ -236,6 +257,8 @@ public class TopFragment extends BaseFragment {
 					NetworkUtils.toSessionInvalid(getActivity());
 				}else {
 					Map<String, List<Top>> data = GsonUtils.getGsonWithLocalDate(new TypeToken<Map<String, List<Top>>>(){}, object);
+					tops.get("1").clear();
+					tops.get("1").addAll(data.get("1"));
 					List<Top> list = data.get("0");
 					Top top_current_new = tops.get("0").get(0);
 					//当前最新新闻比查询得到的新闻时间都要早
@@ -271,25 +294,6 @@ public class TopFragment extends BaseFragment {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-//				String addmore = response.body().string();
-//				if("login_invalid".equals(addmore)) {
-//					NetworkUtils.toSessionInvalid(getActivity());
-//				}else {
-//					List<Top> data = GsonUtils.getGsonWithLocalDate(new TypeToken<List<Top>>(){}, addmore);
-//					if(data == null || data.isEmpty()) {
-//						getActivity().runOnUiThread(new Runnable() {
-//							
-//							@Override
-//							public void run() {
-//								Toast.makeText(getActivity(), "没有更多的新闻了！", 0).show();
-//								refresh_handler.sendEmptyMessage(3);
-//							}
-//						});
-//					}else {
-//						tops.get("0").addAll(data);
-//						refresh_handler.sendEmptyMessage(2);
-//					}
-//				}
 				NetworkUtils.addMoreDataResponse(getActivity(), new TypeToken<List<Top>>(){}, tops.get("0"), response.body().string(), refresh_handler);
 			}
 			

@@ -21,8 +21,9 @@ import com.shang.immediatelynews.utils.ActivityUtils;
 import com.shang.immediatelynews.utils.GlideUtils;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -36,6 +37,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 @ContentView(R.layout.activity_main)
@@ -53,10 +55,10 @@ public class MainActivity extends BaseActivity {
 	private CircleImageView iv;
 	private TextView username;
 	
-	private TopFragment topFragment = new TopFragment();
-	private OwnerFragment ownerFragment = new OwnerFragment();
-	private VideoFragment videoFragment = new VideoFragment();
-	private TypeCompanyFragment typeFragment = new TypeCompanyFragment();
+	private TopFragment topFragment;
+	private OwnerFragment ownerFragment;
+	private VideoFragment videoFragment;
+	private TypeCompanyFragment typeFragment;
 	private Fragment currentFragment;//当前Fragment
 
 	@Override
@@ -67,13 +69,11 @@ public class MainActivity extends BaseActivity {
 		x.view().inject(this);
 		ActivityUtils.addActivities(this);
 		user = (User)getIntent().getSerializableExtra("user");
-		Log.d("new", "user=" + user.toString());
 		setToorbar();
 		setSlideMenu(user);
 		setTop();
 		//默认选中第一项
 		radiogroup.check(R.id.bottom_title_radio_top);
-		//自定义ToolBar并替换默认的ActionBar
 		//监听RadioButton点击并切换不同的页面
 		replaceFragmentByRadioButton();
 		//设置NavigationView默认选中项
@@ -123,9 +123,9 @@ public class MainActivity extends BaseActivity {
 
 	private void setSlideMenu(User user) {
 		if("0".equals(user.getStatus())){
-			nav_view.inflateMenu(R.menu.nav_menu);
-		}else if("1".equals(user.getStatus())){
 			nav_view.inflateMenu(R.menu.nav_menu2);
+		}else if("1".equals(user.getStatus())){
+			nav_view.inflateMenu(R.menu.nav_menu);
 		}else if("2".equals(user.getStatus())){
 			nav_view.inflateMenu(R.menu.nav_menu_admin);
 		}
@@ -141,6 +141,8 @@ public class MainActivity extends BaseActivity {
 	}
 
 	private void setTop() {
+		if(topFragment == null)
+			topFragment = new TopFragment();
 		currentFragment = topFragment;
 		//添加第一个页面的Fragment
 		getSupportFragmentManager().beginTransaction().add(R.id.main_container, topFragment).commit();
@@ -154,11 +156,15 @@ public class MainActivity extends BaseActivity {
 				FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 				switch(checkedId) {
 				case R.id.bottom_title_radio_top:
+					if(topFragment == null)
+						topFragment = new TopFragment();
 					fragmentTransaction.hide(currentFragment);
 					currentFragment = topFragment;
 					fragmentTransaction.show(topFragment).commit();
 					break;
 				case R.id.bottom_title_radio_ours:
+					if(ownerFragment == null)
+						ownerFragment = new OwnerFragment();
 					fragmentTransaction.hide(currentFragment);
 					currentFragment = ownerFragment;
 					if(!ownerFragment.isAdded()){
@@ -168,6 +174,8 @@ public class MainActivity extends BaseActivity {
 					}
 					break;
 				case R.id.bottom_title_radio_video:
+					if(videoFragment == null)
+						videoFragment = new VideoFragment();
 					fragmentTransaction.hide(currentFragment);
 					currentFragment = videoFragment;
 					if(!videoFragment.isAdded()){
@@ -177,6 +185,8 @@ public class MainActivity extends BaseActivity {
 					}
 					break;
 				case R.id.bottom_title_radio_company:
+					if(typeFragment == null)
+						typeFragment = new TypeCompanyFragment();
 					fragmentTransaction.hide(currentFragment);
 					currentFragment = typeFragment;
 					if(!typeFragment.isAdded()){
@@ -194,7 +204,6 @@ public class MainActivity extends BaseActivity {
 
 	private void setToorbar() {
 		//设置标题
-		Log.d("news", user.getCompanyName());
 		toolbar.setTitle(user.getCompanyName());
 //		toolbar.setNavigationIcon(R.drawable.ic_launcher);
 		//替换默认的ActionBar为ToolBar
@@ -235,6 +244,33 @@ public class MainActivity extends BaseActivity {
 			if(username_str!=null && !username_str.equals(username.getText().toString())){
 				username.setText(username_str);
 			}
+		}
+	}
+	
+	private Boolean backFlag = false;
+	private Handler back_handler = new Handler() {
+		
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case 1:
+				backFlag = false;
+				break;
+
+			default:
+				break;
+			}
+	    }
+	};
+	
+	@Override
+	public void onBackPressed() {
+//		super.onBackPressed();
+		if(!backFlag) {
+			Toast.makeText(this, "再按一次退出", 0).show();
+			back_handler.sendEmptyMessageDelayed(1, 2000);
+			backFlag = true;
+		}else {
+			finish();
 		}
 	}
 	

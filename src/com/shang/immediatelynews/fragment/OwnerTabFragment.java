@@ -43,6 +43,7 @@ import okhttp3.Response;
 @ContentView(R.layout.owner_tab_content_layout)
 public class OwnerTabFragment extends BaseFragment{
 
+	protected static final Object Content = null;
 	@ViewInject(R.id.owner_content_recyclerview)
 	private RecyclerView owner_content_recyclerview;
 	@ViewInject(R.id.owner_content_recyclerview_refresh)
@@ -87,7 +88,6 @@ public class OwnerTabFragment extends BaseFragment{
 	}
 
 	public OwnerTabFragment(String title, String type) {
-		Log.d("news", "OwnerTabFragment");
 		this.title = title;
 		this.type = type;
 	}
@@ -151,7 +151,7 @@ public class OwnerTabFragment extends BaseFragment{
 	}
 
 	private void setRecyclerAdapter() {
-		ownerContentAdapter = new OwnerContentAdapter(contents);
+		ownerContentAdapter = new OwnerContentAdapter(getActivity(), contents);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 		owner_content_recyclerview.setLayoutManager(layoutManager);
@@ -192,7 +192,7 @@ public class OwnerTabFragment extends BaseFragment{
 	}
 
 	public void getOwnerContent(String type) {
-		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(getActivity(), "数据加载中12311！");
+		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(getActivity(), "数据加载中！");
 		String url= FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?newsType=" + type + "&history=1";
 		HttpRequestUtils.getRequest(url, new Callback() {
 			

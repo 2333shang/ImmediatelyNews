@@ -11,7 +11,7 @@ import android.util.Log;
 public class GsonUtils {
 	
 	public static <T> T getGsonWithLocalDate(TypeToken<T> typeToken, String object) {
-		Log.d("news", object);
+//		Log.d("news", object);
 		Gson gson = new GsonBuilder()
 				.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 				.create();

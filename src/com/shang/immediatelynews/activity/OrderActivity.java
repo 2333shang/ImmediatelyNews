@@ -22,6 +22,7 @@ import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
 import com.shang.immediatelynews.entities.Order;
 import com.shang.immediatelynews.utils.ActivityUtils;
+import com.shang.immediatelynews.utils.GsonUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
@@ -34,6 +35,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -45,6 +47,8 @@ public class OrderActivity extends BaseActivity {
 	private RecyclerView order_recyclerview;
 	@ViewInject(R.id.order_refresh)
 	private MaterialRefreshLayout order_refresh;
+	@ViewInject(R.id.order_empty)
+	private TextView order_empty;
 	
 	private List<Order> orders = new ArrayList<Order>();
 	private OrderAdapter orderAdapter;
@@ -66,6 +70,7 @@ public class OrderActivity extends BaseActivity {
 			case 3:
 				order_refresh.finishRefreshLoadMore();
 				order_refresh.finishRefresh();
+				break;
 			case 4:
 				setOrderAdapter();
 				setRefreshListener();
@@ -85,6 +90,11 @@ public class OrderActivity extends BaseActivity {
 	}
 
 	protected void setOrderAdapter() {
+		if(orders.size() == 0) {
+			order_empty.setVisibility(View.VISIBLE);
+			order_recyclerview.setVisibility(View.GONE);
+			return;
+		}
 		orderAdapter = new OrderAdapter(this, orders);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -111,18 +121,17 @@ public class OrderActivity extends BaseActivity {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				String object = response.body().string();
-				Log.d("news", object);
-				Gson gson = new GsonBuilder()
-						.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-						.create();
-				Type type = new TypeToken<List<Order>>(){}.getType();
-				orders.addAll((List<Order>)gson.fromJson(object, type));
-				order_handler.sendEmptyMessage(4);
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(OrderActivity.this);
+				}else {
+					orders.addAll((List<Order>)GsonUtils.getGsonWithLocalDate(new TypeToken<List<Order>>(){}, object));
+					order_handler.sendEmptyMessage(4);
+				}
 			}
 			
 			@Override
 			public void onFailure(Call call, IOException exception) {
-				
+				NetworkUtils.showErrorMessage(OrderActivity.this, getMessage());
 			}
 		});
 	}

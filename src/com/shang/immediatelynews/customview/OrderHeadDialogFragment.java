@@ -11,12 +11,14 @@ import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.adapter.OrderHeadViewpagerAdapter;
 import com.shang.immediatelynews.entities.Order;
 import com.shang.immediatelynews.fragment.OrderHeadFragment;
+import com.shang.immediatelynews.utils.DensityUtil;
 
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,7 +72,9 @@ public class OrderHeadDialogFragment extends DialogFragment {
         //设置Dialog宽度匹配屏幕宽度
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         //设置Dialog高度自适应
-        lp.height = 600;
+//        lp.height = 600;
+//        DensityUtil.dip2px(getActivity(), 600);
+        lp.height = DensityUtil.dip2px(getActivity(), 500);
         //将属性设置给窗体
         window.setAttributes(lp);
     	List<OrderHeadFragment> fragments = getFragments();
@@ -81,7 +85,7 @@ public class OrderHeadDialogFragment extends DialogFragment {
     
     private List<OrderHeadFragment> getFragments(){
         List<OrderHeadFragment> orderFragments = new ArrayList<OrderHeadFragment>();
-        for(int i=0; i<orders.size()-1 ; i++) {
+        for(int i=0; i<orders.size(); i++) {
         	orderFragments.add(new OrderHeadFragment(orders.get(i), i));
         }
         return orderFragments;

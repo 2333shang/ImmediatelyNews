@@ -10,7 +10,7 @@
     <LinearLayout
         android:id="@+id/video_newsbar"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:background="#000000">
         
@@ -19,7 +19,8 @@
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:text="取消"
+            android:textSize="18sp"
+            android:text="返回"
             android:textColor="#ffffff"
             android:onClick="cancel"
             android:gravity="center"/>
@@ -28,6 +29,7 @@
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="5"
+            android:textSize="18sp"
             android:text="发视频"
             android:textColor="#ffffff"
             android:gravity="center"/>
@@ -37,6 +39,7 @@
             android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:textSize="18sp"
             android:text="发布"
             android:textColor="#ffffff"
             android:onClick="submit"
@@ -51,7 +54,7 @@
         android:singleLine="true"
         android:hint="请输入标题!"/>
     
-    <VideoView
+    <com.longner.lib.JCVideoPlayerStandard
         android:id="@+id/news_video_content"
         android:layout_width="wrap_content"
         android:layout_height="180dp"

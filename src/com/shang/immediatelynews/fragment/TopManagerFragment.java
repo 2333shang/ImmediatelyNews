@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -59,6 +60,8 @@ public class TopManagerFragment extends BaseFragment {
 	private RecyclerView top_manager_recycler;
 	@ViewInject(R.id.top_manager_refresh)
 	private MaterialRefreshLayout top_manager_refresh;
+	@ViewInject(R.id.top_manager_empty)
+	private TextView top_manager_empty;
 	
 	private Handler top_manager_handler = new Handler() {
 		
@@ -105,6 +108,11 @@ public class TopManagerFragment extends BaseFragment {
 	}
 
 	protected void setTopManagerAdapter() {
+		if(tops.size() == 0) {
+			top_manager_empty.setVisibility(View.VISIBLE);
+			top_manager_recycler.setVisibility(View.GONE);
+			return;
+		}
 		adapter = new TopManagerAdapter(getActivity(), tops, type);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -148,10 +156,15 @@ public class TopManagerFragment extends BaseFragment {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				NetworkUtils.dismissLoading2(showLoading2);
-				if(tops.isEmpty()) {
-					tops.addAll((List<Top>)GsonUtils.getGsonWithLocalDate(new TypeToken<List<Top>>(){}, response.body().string()));
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					if(tops.isEmpty()) {
+						tops.addAll((List<Top>)GsonUtils.getGsonWithLocalDate(new TypeToken<List<Top>>(){}, object));
+					}
+					top_manager_handler.sendEmptyMessage(4);
 				}
-				top_manager_handler.sendEmptyMessage(4);
 			}
 			
 			@Override

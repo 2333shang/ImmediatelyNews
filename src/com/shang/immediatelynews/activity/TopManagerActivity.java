@@ -16,6 +16,7 @@ import com.shang.immediatelynews.utils.ActivityUtils;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 @ContentView(R.layout.activity_top_manager)
 public class TopManagerActivity extends BaseActivity {
@@ -46,6 +47,10 @@ public class TopManagerActivity extends BaseActivity {
 //      tabLayout.setTabMode(TabLayout.MODE_FIXED);
          //设置滚动的
         top_manager_tab.setTabMode(TabLayout.MODE_SCROLLABLE);
+	}
+	
+	public void cancel(View v) {
+		finish();
 	}
 	
 	@Override

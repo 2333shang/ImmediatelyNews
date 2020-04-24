@@ -12,6 +12,7 @@ import com.cjj.MaterialRefreshListener;
 import com.google.gson.reflect.TypeToken;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.NewsContentActivity;
+import com.shang.immediatelynews.activity.NewsVideoActivity;
 import com.shang.immediatelynews.activity.OrderCotentActivity;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.OrderContentDetailAdapter;
@@ -98,8 +99,14 @@ public class OrderContentFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-				intent.putExtra("news", (Content)data);
+				Intent intent = null;
+				if("1".equals(newsType)) {
+					intent = new Intent(getActivity(), NewsVideoActivity.class);
+					intent.putExtra("video", (Content)data);
+				}else {
+					intent = new Intent(getActivity(), NewsContentActivity.class);
+					intent.putExtra("news", (Content)data);
+				}
 				startActivity(intent);
 				getActivity().overridePendingTransition(R.anim.video_content_detail_right_in, R.anim.video_content_detail_alpha_dismiss);
 			}
@@ -129,13 +136,18 @@ public class OrderContentFragment extends BaseFragment {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				List<Content> contents = GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, response.body().string());
-				company = new Company();
-				if(newsType.equals("0"))
-					company.setContent(contents);
-				else
-					company.setVideoContent(contents);
-				order_content_detail_handler.sendEmptyMessage(4);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					List<Content> contents = GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, object);
+					company = new Company();
+					if(newsType.equals("0"))
+						company.setContent(contents);
+					else
+						company.setVideoContent(contents);
+					order_content_detail_handler.sendEmptyMessage(4);
+				}
 			}
 			
 			@Override
@@ -184,7 +196,8 @@ public class OrderContentFragment extends BaseFragment {
 			
 			@Override
 			public void onFailure(Call arg0, IOException arg1) {
-				
+				OrderCotentActivity activity = (OrderCotentActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}
 		});
 	}
@@ -204,7 +217,8 @@ public class OrderContentFragment extends BaseFragment {
 			
 			@Override
 			public void onFailure(Call arg0, IOException arg1) {
-				
+				OrderCotentActivity activity = (OrderCotentActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}
 		});
 	}

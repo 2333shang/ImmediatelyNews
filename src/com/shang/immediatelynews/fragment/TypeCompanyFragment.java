@@ -17,6 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.CompanyActivity;
+import com.shang.immediatelynews.activity.NewsContentActivity;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.TypeContentAdapter;
 import com.shang.immediatelynews.adapter.TypeOrderHeadAdapter;
@@ -29,6 +30,7 @@ import com.shang.immediatelynews.utils.GsonUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -197,12 +199,15 @@ public class TypeCompanyFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
+				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
+				intent.putExtra("news", (Content)data);
+				getActivity().startActivity(intent);
 			}
 		});
 	}
 	
 	private void setHeadAdapter(List<Order> order) {
-		orderAdapter = new TypeOrderHeadAdapter(order);
+		orderAdapter = new TypeOrderHeadAdapter(getActivity(), order);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 		layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
 		type_head_recyclerView.setLayoutManager(layoutManager);
@@ -229,33 +234,42 @@ public class TypeCompanyFragment extends BaseFragment {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				String data = response.body().string();
-				Gson gson = new GsonBuilder()
-						.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-						.create();
-				Type type = new TypeToken<List<Order>>(){}.getType();
-				orders.addAll((List<Order>)gson.fromJson(data, type));
-				type_handler.sendEmptyMessage(4);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					orders.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Order>>(){}, object));
+					type_handler.sendEmptyMessage(4);
+				}
 			}
 			
 			@Override
 			public void onFailure(Call call, IOException exception) {
-				Log.d("news", "error=" + exception);
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}
 		});
 	}
 	
 	public void getCompanyContent() {
+		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(getActivity(), "数据加载中！");
 		HttpRequestUtils.getRequest(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/content", new Callback() {
 			
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				contents.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, response.body().string()));
-				type_handler.sendEmptyMessage(5);
+				NetworkUtils.dismissLoading2(showLoading2);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					contents.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, object));
+					type_handler.sendEmptyMessage(5);
+				}
 			}
 			
 			@Override
 			public void onFailure(Call call, IOException exception) {
+				NetworkUtils.dismissLoading2(showLoading2);
 				MainActivity activity = (MainActivity) getActivity();
 				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}

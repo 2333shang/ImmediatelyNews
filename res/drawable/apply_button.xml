@@ -7,6 +7,6 @@
     </corners>
 
     <!-- 内部单色填充 -->
-    <solid android:color="#029ED4" />
+    <solid android:color="#E33E33" />
     
 </shape>

@@ -1,7 +1,6 @@
 package com.shang.immediatelynews.activity;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,8 +10,6 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.shang.immediatelynews.BaseActivity;
 import com.shang.immediatelynews.R;
@@ -21,7 +18,9 @@ import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
 import com.shang.immediatelynews.entities.Collect;
+import com.shang.immediatelynews.entities.Content;
 import com.shang.immediatelynews.utils.ActivityUtils;
+import com.shang.immediatelynews.utils.GsonUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
@@ -33,6 +32,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.TextView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -44,6 +44,8 @@ public class CollectActivity extends BaseActivity {
 	private RecyclerView collect_recyclerview;
 	@ViewInject(R.id.collect_refresh)
 	private MaterialRefreshLayout collect_refresh;
+	@ViewInject(R.id.collect_empty)
+	private TextView collect_empty;
 	
 	private List<Collect> collects = new ArrayList<Collect>();
 	private CollectAdapter collectAdapter;
@@ -65,6 +67,7 @@ public class CollectActivity extends BaseActivity {
 			case 3:
 				collect_refresh.finishRefreshLoadMore();
 				collect_refresh.finishRefresh();
+				break;
 			case 4:
 				setCollectAdapter();
 				setRefreshListener();
@@ -84,6 +87,11 @@ public class CollectActivity extends BaseActivity {
 	}
 
 	protected void setCollectAdapter() {
+		if(collects.size() == 0) {
+			collect_empty.setVisibility(View.VISIBLE);
+			collect_recyclerview.setVisibility(View.GONE);
+			return;
+		}
 		collectAdapter = new CollectAdapter(CollectActivity.this, collects);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 		layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -96,8 +104,17 @@ public class CollectActivity extends BaseActivity {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Intent intent = new Intent(CollectActivity.this, NewsContentActivity.class);
-				intent.putExtra("collects", (Collect) data);
+				Intent intent = null;
+				if("1".equals(((Collect) data).getContent().getNewsType())) {
+					intent = new Intent(CollectActivity.this, NewsVideoActivity.class);
+					Collect c = (Collect) data;
+					Content content = c.getContent();
+					content.setId(c.getRelatedId());
+					intent.putExtra("video", content);
+				}else {
+					intent = new Intent(CollectActivity.this, NewsContentActivity.class);
+					intent.putExtra("collects", (Collect) data);
+				}
 				startActivity(intent);
 			}
 		});
@@ -110,18 +127,17 @@ public class CollectActivity extends BaseActivity {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				String object = response.body().string();
-				Gson gson = new GsonBuilder()
-						.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-						.create();
-				Type type = new TypeToken<List<Collect>>(){}.getType();
-//				Log.d("news", object);
-				collects.addAll((List<Collect>)gson.fromJson(object, type));
-				collect_handler.sendEmptyMessage(4);
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(CollectActivity.this);
+				}else {
+					collects.addAll((List<Collect>)GsonUtils.getGsonWithLocalDate(new TypeToken<List<Collect>>(){}, object));
+					collect_handler.sendEmptyMessage(4);
+				}
 			}
 			
 			@Override
 			public void onFailure(Call call, IOException exception) {
-				
+				NetworkUtils.showErrorMessage(CollectActivity.this, getMessage());
 			}
 		});
 	}

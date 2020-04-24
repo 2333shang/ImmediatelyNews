@@ -20,6 +20,7 @@ import com.shang.immediatelynews.utils.GsonUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -121,17 +122,22 @@ public class NewsContentActivity extends BaseActivity {
 					
 					@Override
 					public void onResponse(Call arg0, Response response) throws IOException {
-						runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								if("+收藏".equals(content_user_collectbtn.getText().toString())) {
-									content_user_collectbtn.setText("取消收藏");
-								}else {
-									content_user_collectbtn.setText("+收藏");
+						String object = response.body().string();
+						if("login_invalid".equals(object)) {
+							NetworkUtils.toSessionInvalid(NewsContentActivity.this);
+						}else {
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									if("+收藏".equals(content_user_collectbtn.getText().toString())) {
+										content_user_collectbtn.setText("取消收藏");
+									}else {
+										content_user_collectbtn.setText("+收藏");
+									}
 								}
-							}
-						});
+							});
+						}
 					}
 					
 					@Override
@@ -159,7 +165,7 @@ public class NewsContentActivity extends BaseActivity {
 			
 			@Override
 			public void onFailure(Call arg0, IOException arg1) {
-				
+				NetworkUtils.showErrorMessage(NewsContentActivity.this, getMessage());
 			}
 		});
 	}

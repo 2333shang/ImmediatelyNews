@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.internal.LinkedTreeMap;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.entities.Order;
+import com.shang.immediatelynews.utils.GlideUtils;
 
+import android.content.Context;
 import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -19,10 +19,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class TypeOrderHeadAdapter extends RecyclerView.Adapter<TypeOrderHeadAdapter.ViewHolder>{
 	
 	private List<Order> orders = new ArrayList<Order>();
+	private Context context;
 	
-	public TypeOrderHeadAdapter(List<Order> orders) {
+	public TypeOrderHeadAdapter(Context context, List<Order> orders) {
 		super();
 		this.orders = orders;
+		this.context = context;
 	}
 
 	static class ViewHolder extends RecyclerView.ViewHolder{
@@ -48,15 +50,15 @@ public class TypeOrderHeadAdapter extends RecyclerView.Adapter<TypeOrderHeadAdap
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		if(position == orders.size()) {
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
-			Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
+			GlideUtils.loadImage(context, holder.order_head_recyclerview_image, image);
+//			Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
 			holder.order_head_user.setText("关注更多");
 		}else {
 			Order order = (Order) orders.get(position);
-//			Log.d("news", "order=" + order.toString());
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
-//			Log.d("news", image);
 			holder.order_head_user.setText(order.getCompany().getCompanyName());
-			Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
+			GlideUtils.loadImage(context, holder.order_head_recyclerview_image, image);
+//			Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
 		}
 	}
 

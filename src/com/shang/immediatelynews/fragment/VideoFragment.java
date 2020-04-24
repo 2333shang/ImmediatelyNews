@@ -1,7 +1,6 @@
 package com.shang.immediatelynews.fragment;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,12 +10,11 @@ import org.xutils.view.annotation.ViewInject;
 
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
+import com.shang.immediatelynews.activity.NewsVideoActivity;
+import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.VideoAdapter;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.decoration.DividerListItemDecoration;
@@ -26,6 +24,7 @@ import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -35,7 +34,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -86,7 +84,7 @@ public class VideoFragment extends BaseFragment {
 	}
 
 	private void setRefreshListener() {
-		video_recyclerview_refresh.autoRefresh();//设置自动下拉刷新
+//		video_recyclerview_refresh.autoRefresh();//设置自动下拉刷新
 		video_recyclerview_refresh.setMaterialRefreshListener(new MaterialRefreshListener() {
 			
 			@Override
@@ -148,13 +146,15 @@ public class VideoFragment extends BaseFragment {
 		//设置动画
 		video_recyclerView.setItemAnimator(new DefaultItemAnimator());
 		//设置点击事件
-		/*videoAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
+		videoAdapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Toast.makeText(v.getContext(), data.toString(), 0).show();
+				Intent intent = new Intent(getActivity(), NewsVideoActivity.class);
+				intent.putExtra("video", (Content)data);
+				startActivity(intent);
 			}
-		});*/
+		});
 	}
 
 	@Override
@@ -169,9 +169,13 @@ public class VideoFragment extends BaseFragment {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				NetworkUtils.dismissLoading2(showLoading2);
-				videos.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, response.body().string()));
-				Log.d("news", videos.toString());
-				refresh_handler.sendEmptyMessage(4);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					videos.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, object));
+					refresh_handler.sendEmptyMessage(4);
+				}
 			}
 			
 			@Override

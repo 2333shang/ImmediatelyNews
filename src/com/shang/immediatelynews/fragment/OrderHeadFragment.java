@@ -11,8 +11,10 @@ import org.xutils.view.annotation.ViewInject;
 import com.cjj.MaterialRefreshLayout;
 import com.cjj.MaterialRefreshListener;
 import com.google.gson.reflect.TypeToken;
+import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.NewsContentActivity;
+import com.shang.immediatelynews.activity.NewsVideoActivity;
 import com.shang.immediatelynews.adapter.OnRecyclerViewItemClickListener;
 import com.shang.immediatelynews.adapter.OrderHeadDialogAdapter;
 import com.shang.immediatelynews.adapter.OwnerContentAdapter;
@@ -87,19 +89,26 @@ public class OrderHeadFragment extends BaseFragment {
 	
     private void getOrderContent() {
     	String companyId = order.getOrderCompany();
+    	Log.d("news", "companyId=" + companyId);
 //    	String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
 		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1";
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override
 			public void onResponse(Call arg0, Response response) throws IOException {
-				contents.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, response.body().string()));
-				order_head_handler.sendEmptyMessage(4);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(getActivity());
+				}else {
+					contents.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, object));
+					order_head_handler.sendEmptyMessage(4);
+				}
 			}
 			
 			@Override
 			public void onFailure(Call arg0, IOException arg1) {
-				
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}
 		});
 	}
@@ -133,8 +142,14 @@ public class OrderHeadFragment extends BaseFragment {
 			
 			@Override
 			public void onItemClick(View v, int position, Object data) {
-				Intent intent = new Intent(getActivity(), NewsContentActivity.class);
-				intent.putExtra("news", (Content)data);
+				Intent intent = null;
+				if("1".equals(((Content)data).getNewsType())) {
+					intent = new Intent(getActivity(), NewsVideoActivity.class);
+					intent.putExtra("video", (Content)data);
+				}else {
+					intent = new Intent(getActivity(), NewsContentActivity.class);
+					intent.putExtra("news", (Content)data);
+				}
 				startActivity(intent);
 			}
 		});
@@ -170,7 +185,8 @@ public class OrderHeadFragment extends BaseFragment {
 			
 			@Override
 			public void onFailure(Call arg0, IOException arg1) {
-				
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}
 		});
 	}
@@ -189,7 +205,8 @@ public class OrderHeadFragment extends BaseFragment {
 			
 			@Override
 			public void onFailure(Call arg0, IOException arg1) {
-				
+				MainActivity activity = (MainActivity) getActivity();
+				NetworkUtils.showErrorMessage(activity, activity.getMessage());
 			}
 		});
 	}

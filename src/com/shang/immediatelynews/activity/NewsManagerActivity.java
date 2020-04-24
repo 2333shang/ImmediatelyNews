@@ -8,6 +8,7 @@ import org.xutils.view.annotation.ContentView;
 import org.xutils.view.annotation.ViewInject;
 
 import com.shang.immediatelynews.BaseActivity;
+import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.adapter.NewsManagerTabAdapter;
 import com.shang.immediatelynews.fragment.NewsManagerFragment;
@@ -17,7 +18,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
+import android.view.View;
 
 @ContentView(R.layout.activity_news_manager)
 public class NewsManagerActivity extends BaseActivity {
@@ -50,6 +51,15 @@ public class NewsManagerActivity extends BaseActivity {
          //设置滚动的
         news_manager_tab.setTabMode(TabLayout.MODE_SCROLLABLE);
 	}
+	
+	public void cancel(View v) {
+		finish();
+	}
+	
+//	public void totop(View v) {
+//		Intent intent = new Intent(this, TopManagerActivity.class);
+//		startActivity(intent);
+//	}
 	
 	@Override
 	protected void onDestroy() {

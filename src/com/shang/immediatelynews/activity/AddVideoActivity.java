@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.BaseActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.callback.FileUploadCallback;
@@ -48,7 +49,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 import okhttp3.Call;
 import okhttp3.FormBody;
 import okhttp3.FormBody.Builder;
@@ -58,7 +58,7 @@ import okhttp3.Response;
 public class AddVideoActivity extends BaseActivity {
 
 	@ViewInject(R.id.news_video_content)
-	private VideoView news_video_content;
+	private JCVideoPlayerStandard news_video_content;
 	@ViewInject(R.id.news_video_titie)
 	private EditText news_video_titie;
 	@ViewInject(R.id.news_video_img)
@@ -83,26 +83,35 @@ public class AddVideoActivity extends BaseActivity {
 				}
 //				news_video_content.loadUrl(attachment_video.getUrl());
 //				getVideoImage(attachment_video.getUrl());
-				Log.d("news", path);
-				news_video_content.setVideoPath(path);
-				news_video_content.start();
+				news_video_content.setUp(path, attachment_video.getFileName());
+//				news_video_content.start();
 				getVideoImage(path);
 				break;
 			case 2:
 				FormBody.Builder params = (Builder) msg.obj;
-				Log.d("news", params.toString());
 				String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addnews";
 				HttpRequestUtils.getPost(url, params, new okhttp3.Callback() {
-
+					
 					@Override
 					public void onResponse(Call call, Response response) throws IOException {
-						Log.d("news", "上传成功！");
-						finish();
+						String object = response.body().string();
+						if("login_invalid".equals(object)) {
+							NetworkUtils.toSessionInvalid(AddVideoActivity.this);
+						}else {
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									Toast.makeText(AddVideoActivity.this, "发布成功!", 0).show();
+									finish();
+								}
+							});
+						}
 					}
-
+					
 					@Override
 					public void onFailure(Call call, IOException response) {
-
+						NetworkUtils.showErrorMessage(AddVideoActivity.this, getMessage());
 					}
 				});
 				break;
@@ -342,6 +351,18 @@ public class AddVideoActivity extends BaseActivity {
 	}
 	
 	private void uploadImageFile(final String path) {
+		if(path == null) {
+			Toast.makeText(this, "请上传视频", 0).show();
+			return;
+		}
+		if(news_video_titie.getText().toString() == null || news_video_titie.getText().toString().equals("")) {
+			Toast.makeText(this, "请输入新闻标题", 0).show();
+			return;
+		}
+		if(attachment_video == null || attachment_video.getUrl().equals("")) {
+			Toast.makeText(this, "请上传视频", 0).show();
+			return;
+		}
 		File file = new File(path);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("preId", preId);
@@ -355,7 +376,7 @@ public class AddVideoActivity extends BaseActivity {
 		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH
 				+ "/attachment/uploadattachment";
 		
-		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(AddVideoActivity.this, getMessage());
+		final ProgressDialog showLoading2 = NetworkUtils.showLoading2(AddVideoActivity.this, "上传中！");
 		OkHttpUtils.post()//
 				.addFile("file", path.substring(path.lastIndexOf("/") + 1), file)// 指定接收文件参数名，文件名和文件
 				.url(url).params(params)// 设置参数

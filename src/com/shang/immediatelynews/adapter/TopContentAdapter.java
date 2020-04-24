@@ -1,32 +1,25 @@
 package com.shang.immediatelynews.adapter;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.bumptech.glide.Glide;
 import com.shang.immediatelynews.R;
-import com.shang.immediatelynews.activity.OrderActivity;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Attachment;
+import com.shang.immediatelynews.entities.Content;
 import com.shang.immediatelynews.entities.Top;
+import com.shang.immediatelynews.utils.DateUtils;
 import com.shang.immediatelynews.utils.GlideUtils;
-import com.shang.immediatelynews.utils.HttpRequestUtils;
-import com.shang.immediatelynews.utils.NetworkUtils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class TopContentAdapter extends RecyclerView.Adapter<TopContentAdapter.ViewHolder>{
 	
@@ -45,25 +38,29 @@ public class TopContentAdapter extends RecyclerView.Adapter<TopContentAdapter.Vi
 	static class ViewHolder extends RecyclerView.ViewHolder{
 
 		private View view;
-		private TextView top_content_content;
-		private TextView top_user;
-		private TextView top_time;
-		private LinearLayout top_linearlayout;
-		private List<ImageView> top_content_view;
+		private TextView news_content_detail_title;
+		private TextView news_content_detail_user;
+		private TextView news_content_detail_time;
+		private List<ImageView> news_content_detail_contents;
+		private ImageView news_content_detail_video;
+		private LinearLayout news_content_detail_content_head;
+		private FrameLayout news_content_detail_video_head;
 		public ViewHolder(View itemView) {
 			super(itemView);
 			view = itemView;
-			top_content_content = (TextView) itemView.findViewById(R.id.top_content_content);
-			top_user = (TextView) itemView.findViewById(R.id.top_user);
-			top_time = (TextView) itemView.findViewById(R.id.top_time);
-			top_linearlayout = (LinearLayout) itemView.findViewById(R.id.top_linearlayout);
-			ImageView top_content_view1 = (ImageView) itemView.findViewById(R.id.top_content_view1);
-			ImageView top_content_view2 = (ImageView) itemView.findViewById(R.id.top_content_view2);
-			ImageView top_content_view3 = (ImageView) itemView.findViewById(R.id.top_content_view3);
-			top_content_view = new ArrayList<ImageView>();
-			top_content_view.add(top_content_view1);
-			top_content_view.add(top_content_view2);
-			top_content_view.add(top_content_view3);
+			news_content_detail_video = (ImageView) itemView.findViewById(R.id.news_content_detail_video);
+			news_content_detail_title = (TextView) itemView.findViewById(R.id.news_content_detail_title);
+			news_content_detail_user = (TextView) itemView.findViewById(R.id.news_content_detail_user);
+			news_content_detail_time = (TextView) itemView.findViewById(R.id.news_content_detail_time);
+			news_content_detail_contents = new ArrayList<ImageView>();
+			ImageView news_content_detail_content_1 = (ImageView) itemView.findViewById(R.id.news_content_detail_content_1);
+			ImageView news_content_detail_content_2 = (ImageView) itemView.findViewById(R.id.news_content_detail_content_2);
+			ImageView news_content_detail_content_3 = (ImageView) itemView.findViewById(R.id.news_content_detail_content_3);
+			news_content_detail_contents.add(news_content_detail_content_1);
+			news_content_detail_contents.add(news_content_detail_content_2);
+			news_content_detail_contents.add(news_content_detail_content_3);
+			news_content_detail_content_head = (LinearLayout) itemView.findViewById(R.id.news_content_detail_content_head);
+			news_content_detail_video_head = (FrameLayout) itemView.findViewById(R.id.news_content_detail_video_head);
 		}
 		
 	}
@@ -74,20 +71,44 @@ public class TopContentAdapter extends RecyclerView.Adapter<TopContentAdapter.Vi
 	}
 
 	@Override
-	public void onBindViewHolder(final ViewHolder holder, int position) {
+	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
+		viewHolder.news_content_detail_content_head.setVisibility(View.GONE);
+		viewHolder.news_content_detail_video_head.setVisibility(View.GONE);
 		final Top top = topNews.get(position);
-		holder.top_content_content.setText(top.getContent().getTitle());
-		holder.top_user.setText(top.getContent().getAuthorName());
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		holder.top_time.setText(dateFormat.format(top.getContent().getSendtime()));
-		List<Attachment> pics = top.getContent().getPics();
-		if(pics != null && !pics.isEmpty()) {
-			holder.top_linearlayout.setVisibility(View.VISIBLE);
-			for(int i=0; i<pics.size(); i++) {
-				ImageView imageView = holder.top_content_view.get(i);
-				GlideUtils.loadImage(context, imageView, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl());
-				if(i == 2) {
-					break;
+		Content content = top.getContent();
+		viewHolder.news_content_detail_title.setText(content.getTitle());
+		viewHolder.news_content_detail_user.setText(content.getAuthorName());
+		viewHolder.news_content_detail_time.setText(DateUtils.formatDate(top.getTopTime()));
+		List<Attachment> pics = content.getPics();
+		if("0".equals(content.getNewsType())){
+			if(!pics.isEmpty()) {
+				viewHolder.news_content_detail_content_head.setVisibility(View.VISIBLE);
+				for(int i=0; i<viewHolder.news_content_detail_contents.size(); i++) {
+					ImageView imageView = viewHolder.news_content_detail_contents.get(i);
+					imageView.setVisibility(View.INVISIBLE);
+				}
+				for(int i=0; i<pics.size(); i++) {
+					ImageView imageView = viewHolder.news_content_detail_contents.get(i);
+					imageView.setImageResource(R.drawable.news);
+					GlideUtils.loadImage(context, imageView, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl());
+					if(i == 2) {
+						break;
+					}
+				}
+			}
+		}else{
+			if(pics != null && !pics.isEmpty()) {
+				viewHolder.news_content_detail_video_head.setVisibility(View.VISIBLE);
+				boolean hasPic = false;
+				for(Attachment a:pics) {
+					if(a.getAttachmentType().equals("2")) {
+						hasPic = true;
+						GlideUtils.loadBackgroupImage(context, viewHolder.news_content_detail_video, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + a.getUrl());
+						break;
+					}
+				}
+				if(!hasPic) {
+					GlideUtils.loadBackgroupImage(context, viewHolder.news_content_detail_video, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + FileUploadConstant.FILE_DEFAULT_HEAD);
 				}
 			}
 		}
@@ -95,7 +116,7 @@ public class TopContentAdapter extends RecyclerView.Adapter<TopContentAdapter.Vi
 
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewTtpe) {
-		View view = View.inflate(parent.getContext(), R.layout.top_content_layout, null);
+		View view = View.inflate(parent.getContext(), R.layout.activity_news_content_recyclerview_detail, null);
 		final ViewHolder viewHolder = new ViewHolder(view);
 		viewHolder.view.setOnClickListener(new View.OnClickListener() {
 			

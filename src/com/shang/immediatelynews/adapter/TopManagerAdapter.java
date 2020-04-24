@@ -1,30 +1,32 @@
 package com.shang.immediatelynews.adapter;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.longner.lib.JCVideoPlayerStandard;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.TopManagerActivity;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Attachment;
+import com.shang.immediatelynews.entities.Content;
 import com.shang.immediatelynews.entities.Top;
+import com.shang.immediatelynews.utils.GlideUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Environment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -49,33 +51,37 @@ public class TopManagerAdapter extends RecyclerView.Adapter<TopManagerAdapter.Vi
 	static class ViewHolder extends RecyclerView.ViewHolder{
 
 		private View view;
-		private TextView top_manager_detail_title;
-		private TextView top_manager_detail_apply_reason;
-		private List<ImageView> top_manager_detail_contents;
-		private JCVideoPlayerStandard top_manager_detail_video;
-		private LinearLayout top_manager_detail_content_head;
-		private LinearLayout top_manager_detail_video_head;
-		private RelativeLayout top_manager_detail_apply;
-		private Button top_manager_detail_apply_agree;
-		private Button top_manager_detail_apply_rejust;
+		private TextView news_content_detail_title;
+		private TextView news_content_detail_user;
+		private TextView news_content_detail_apply_reason;
+		private TextView news_content_detail_time;
+		private List<ImageView> news_content_detail_contents;
+		private ImageView news_content_detail_video;
+		private LinearLayout news_content_detail_content_head;
+		private FrameLayout news_content_detail_video_head;
+		private RelativeLayout news_content_detail_apply;
+		private Button news_content_detail_apply_agree;
+		private Button news_content_detail_apply_rejust;
 		public ViewHolder(View itemView) {
 			super(itemView);
 			view = itemView;
-			top_manager_detail_video = (JCVideoPlayerStandard) itemView.findViewById(R.id.top_manager_detail_video);
-			top_manager_detail_title = (TextView) itemView.findViewById(R.id.top_manager_detail_title);
-			top_manager_detail_apply_reason = (TextView) itemView.findViewById(R.id.top_manager_detail_apply_reason);
-			top_manager_detail_contents = new ArrayList<ImageView>();
-			ImageView top_manager_detail_content_1 = (ImageView) itemView.findViewById(R.id.top_manager_detail_content_1);
-			ImageView top_manager_detail_content_2 = (ImageView) itemView.findViewById(R.id.top_manager_detail_content_2);
-			ImageView top_manager_detail_content_3 = (ImageView) itemView.findViewById(R.id.top_manager_detail_content_3);
-			top_manager_detail_contents.add(top_manager_detail_content_1);
-			top_manager_detail_contents.add(top_manager_detail_content_2);
-			top_manager_detail_contents.add(top_manager_detail_content_3);
-			top_manager_detail_content_head = (LinearLayout) itemView.findViewById(R.id.top_manager_detail_content_head);
-			top_manager_detail_video_head = (LinearLayout) itemView.findViewById(R.id.top_manager_detail_video_head);
-			top_manager_detail_apply = (RelativeLayout) itemView.findViewById(R.id.top_manager_detail_apply);
-			top_manager_detail_apply_agree = (Button) itemView.findViewById(R.id.top_manager_detail_apply_agree);
-			top_manager_detail_apply_rejust = (Button) itemView.findViewById(R.id.top_manager_detail_apply_rejust);
+			news_content_detail_video = (ImageView) itemView.findViewById(R.id.news_content_detail_video);
+			news_content_detail_title = (TextView) itemView.findViewById(R.id.news_content_detail_title);
+			news_content_detail_user = (TextView) itemView.findViewById(R.id.news_content_detail_user);
+			news_content_detail_time = (TextView) itemView.findViewById(R.id.news_content_detail_time);
+			news_content_detail_apply_reason = (TextView) itemView.findViewById(R.id.news_content_detail_apply_reason);
+			news_content_detail_contents = new ArrayList<ImageView>();
+			ImageView news_content_detail_content_1 = (ImageView) itemView.findViewById(R.id.news_content_detail_content_1);
+			ImageView news_content_detail_content_2 = (ImageView) itemView.findViewById(R.id.news_content_detail_content_2);
+			ImageView news_content_detail_content_3 = (ImageView) itemView.findViewById(R.id.news_content_detail_content_3);
+			news_content_detail_contents.add(news_content_detail_content_1);
+			news_content_detail_contents.add(news_content_detail_content_2);
+			news_content_detail_contents.add(news_content_detail_content_3);
+			news_content_detail_content_head = (LinearLayout) itemView.findViewById(R.id.news_content_detail_content_head);
+			news_content_detail_video_head = (FrameLayout) itemView.findViewById(R.id.news_content_detail_video_head);
+			news_content_detail_apply = (RelativeLayout) itemView.findViewById(R.id.news_content_detail_apply);
+			news_content_detail_apply_agree = (Button) itemView.findViewById(R.id.news_content_detail_apply_agree);
+			news_content_detail_apply_rejust = (Button) itemView.findViewById(R.id.news_content_detail_apply_rejust);
 		}
 	}
 
@@ -86,35 +92,55 @@ public class TopManagerAdapter extends RecyclerView.Adapter<TopManagerAdapter.Vi
 
 	@Override
 	public void onBindViewHolder(final ViewHolder viewHolder, int postiopn) {
+		viewHolder.news_content_detail_content_head.setVisibility(View.GONE);
+		viewHolder.news_content_detail_video_head.setVisibility(View.GONE);
 		final Top top = tops.get(postiopn);
-		viewHolder.top_manager_detail_title.setText(top.getContent().getTitle());
-		viewHolder.top_manager_detail_apply_reason.setText("申请类型:" + ("0".equals(top.getResousel())?"普通头条":"轮播头条"));
+		final Content content = top.getContent();
+		viewHolder.news_content_detail_title.setText(content.getTitle());
+		viewHolder.news_content_detail_user.setText(content.getAuthorName());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		viewHolder.news_content_detail_apply_reason.setText("申请类型:" + ("0".equals(top.getResousel())?"普通头条":"轮播头条"));
 		if("0".equals(type)) {
-			viewHolder.top_manager_detail_apply.setVisibility(View.VISIBLE);
+			viewHolder.news_content_detail_apply.setVisibility(View.VISIBLE);
+			viewHolder.news_content_detail_time.setText(format.format(content.getSendtime()));
+		}else {
+			viewHolder.news_content_detail_time.setText(format.format(top.getTopTime()));
 		}
-		if("0".equals(top.getContent().getNewsType())){
-			List<Attachment> pics = top.getContent().getPics();
+		List<Attachment> pics = content.getPics();
+		if("0".equals(content.getNewsType())){
 			if(!pics.isEmpty()) {
-				viewHolder.top_manager_detail_content_head.setVisibility(View.VISIBLE);
+				viewHolder.news_content_detail_content_head.setVisibility(View.VISIBLE);
+				for(int i=0; i<viewHolder.news_content_detail_contents.size(); i++) {
+					ImageView imageView = viewHolder.news_content_detail_contents.get(i);
+					imageView.setVisibility(View.INVISIBLE);
+				}
 				for(int i=0; i<pics.size(); i++) {
-					final ImageView imageView = viewHolder.top_manager_detail_contents.get(i);
-					Glide.with(context).asBitmap().load(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl()).into(new SimpleTarget<Bitmap>() {
-						
-						@Override
-						public void onResourceReady(Bitmap bm, Transition<? super Bitmap> arg1) {
-							imageView.setImageBitmap(bm);
-						}
-					});
+					final ImageView imageView = viewHolder.news_content_detail_contents.get(i);
+					imageView.setImageResource(R.drawable.news);
+					GlideUtils.loadImage(context, imageView, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl());
 					if(i == 2) {
 						break;
 					}
 				}
 			}
 		}else{
-			viewHolder.top_manager_detail_video_head.setVisibility(View.VISIBLE);
-			viewHolder.top_manager_detail_video.setUp(Environment.getExternalStorageDirectory()+"/shenxiaoai.mp4", top.getContent()	.getTitle());
+			if(pics != null && !pics.isEmpty()) {
+				viewHolder.news_content_detail_video_head.setVisibility(View.VISIBLE);
+				boolean hasPic = false;
+				viewHolder.news_content_detail_video.setBackgroundResource(R.drawable.news);
+				for(Attachment a:pics) {
+					if(a.getAttachmentType().equals("2")) {
+						hasPic = true;
+						GlideUtils.loadBackgroupImage(context, viewHolder.news_content_detail_video, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + a.getUrl());
+						break;
+					}
+				}
+				if(!hasPic) {
+					GlideUtils.loadBackgroupImage(context, viewHolder.news_content_detail_video, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + FileUploadConstant.FILE_DEFAULT_HEAD);
+				}
+			}
 		}
-		viewHolder.top_manager_detail_apply_agree.setOnClickListener(new View.OnClickListener() {
+		viewHolder.news_content_detail_apply_agree.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -124,15 +150,19 @@ public class TopManagerAdapter extends RecyclerView.Adapter<TopManagerAdapter.Vi
 					
 					@Override
 					public void onResponse(Call arg0, Response response) throws IOException {
-						Log.d("news", "同意申请=" + response.body().string());
-						((Activity)context).runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								tops.remove(viewHolder.getAdapterPosition());
-								notifyDataSetChanged();
-							}
-						});
+						String object = response.body().string();
+						if("login_invalid".equals(object)) {
+							NetworkUtils.toSessionInvalid((Activity)context);
+						}else {
+							((Activity)context).runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									tops.remove(viewHolder.getAdapterPosition());
+									notifyDataSetChanged();
+								}
+							});
+						}
 					}
 					
 					@Override
@@ -143,7 +173,7 @@ public class TopManagerAdapter extends RecyclerView.Adapter<TopManagerAdapter.Vi
 				});
 			}
 		});
-		viewHolder.top_manager_detail_apply_rejust.setOnClickListener(new View.OnClickListener() {
+		viewHolder.news_content_detail_apply_rejust.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -153,15 +183,19 @@ public class TopManagerAdapter extends RecyclerView.Adapter<TopManagerAdapter.Vi
 					
 					@Override
 					public void onResponse(Call arg0, Response response) throws IOException {
-						Log.d("news", "拒绝申请=" + response.body().string());
-						((Activity)context).runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								tops.remove(viewHolder.getAdapterPosition());
-								notifyDataSetChanged();
-							}
-						});
+						String object = response.body().string();
+						if("login_invalid".equals(object)) {
+							NetworkUtils.toSessionInvalid((Activity)context);
+						}else {
+							((Activity)context).runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									tops.remove(viewHolder.getAdapterPosition());
+									notifyDataSetChanged();
+								}
+							});
+						}
 					}
 					
 					@Override
@@ -176,7 +210,8 @@ public class TopManagerAdapter extends RecyclerView.Adapter<TopManagerAdapter.Vi
 
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup parent, int viewTtpe) {
-		View view = View.inflate(parent.getContext(), R.layout.activity_top_manager_detail_recyclerview, null);
+		View view = View.inflate(parent.getContext(), R.layout.activity_news_content_recyclerview_detail, null);
+//		View view = View.inflate(parent.getContext(), R.layout.activity_top_manager_detail_recyclerview, null);
 		final ViewHolder viewHolder = new ViewHolder(view);
 		viewHolder.view.setOnClickListener(new View.OnClickListener() {
 			

@@ -1,6 +1,7 @@
 package com.shang.immediatelynews.adapter;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,14 +42,16 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
 		private View view;
 		private TextView order_detail_companyname;
-		private TextView order_detail_content_title;
+		private TextView order_detail_content_creater;
+		private TextView order_detail_content_createtime;
 		private CircleImageView order_detail_headicon;
 		private Button order_btn;
 		public ViewHolder(View itemView) {
 			super(itemView);
 			view = itemView;
 			order_detail_companyname = (TextView) itemView.findViewById(R.id.order_detail_companyname);
-			order_detail_content_title = (TextView) itemView.findViewById(R.id.order_detail_content_title);
+			order_detail_content_creater = (TextView) itemView.findViewById(R.id.order_detail_content_creater);
+			order_detail_content_createtime = (TextView) itemView.findViewById(R.id.order_detail_content_createtime);
 			order_detail_headicon = (CircleImageView) itemView.findViewById(R.id.order_detail_headicon);
 			order_btn = (Button) itemView.findViewById(R.id.order_btn);
 		}
@@ -63,7 +66,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 	public void onBindViewHolder(final ViewHolder viewHolder, int postiopn) {
 		final Order order = orders.get(postiopn);
 		viewHolder.order_detail_companyname.setText(order.getCompany().getCompanyName());
-		viewHolder.order_detail_content_title.setText("最新新闻！");
+		viewHolder.order_detail_content_creater.setText(order.getCompany().getCreater());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		viewHolder.order_detail_content_createtime.setText(format.format(order.getCompany().getCreatetime()));
 		Glide.with(context).load(Environment.getExternalStorageDirectory() + "/first.jpg").into(viewHolder.order_detail_headicon);
 //		viewHolder.order_btn.setText("取消关注");
 		viewHolder.order_btn.setOnClickListener(new View.OnClickListener() {
@@ -81,20 +86,22 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 					
 					@Override
 					public void onResponse(Call arg0, Response response) throws IOException {
-						((Activity)context).runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								if("取消关注".equals(viewHolder.order_btn.getText())) {
-									viewHolder.order_btn.setText("+关注");
-								}else {
-									viewHolder.order_btn.setText("取消关注");
+						String object = response.body().string();
+						if("login_invalid".equals(object)) {
+							NetworkUtils.toSessionInvalid((Activity)context);
+						}else {
+							((Activity)context).runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									if("取消关注".equals(viewHolder.order_btn.getText())) {
+										viewHolder.order_btn.setText("+关注");
+									}else {
+										viewHolder.order_btn.setText("取消关注");
+									}
 								}
-//								int position = viewHolder.getAdapterPosition();
-//								orders.remove(position);
-//								notifyDataSetChanged();
-							}
-						});
+							});
+						}
 					}
 					
 					@Override

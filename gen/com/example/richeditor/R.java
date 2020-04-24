@@ -28,25 +28,25 @@ public final class R {
 		public static final int justify_left = 0x7f02007e;
 		public static final int justify_right = 0x7f02007f;
 		public static final int outdent = 0x7f020087;
-		public static final int redo = 0x7f020091;
-		public static final int strikethrough = 0x7f020096;
-		public static final int subscript = 0x7f020097;
-		public static final int superscript = 0x7f020098;
-		public static final int txt_color = 0x7f020099;
-		public static final int underline = 0x7f02009a;
-		public static final int undo = 0x7f02009b;
+		public static final int redo = 0x7f020092;
+		public static final int strikethrough = 0x7f020097;
+		public static final int subscript = 0x7f020098;
+		public static final int superscript = 0x7f020099;
+		public static final int txt_color = 0x7f02009a;
+		public static final int underline = 0x7f02009b;
+		public static final int undo = 0x7f02009c;
 	}
 	public static final class id {
-		public static final int action_align_center = 0x7f0f0079;
-		public static final int action_align_left = 0x7f0f0078;
-		public static final int action_align_right = 0x7f0f007a;
-		public static final int action_bold = 0x7f0f0074;
-		public static final int action_insert_image = 0x7f0f007b;
-		public static final int action_italic = 0x7f0f0075;
-		public static final int action_redo = 0x7f0f0073;
-		public static final int action_strikethrough = 0x7f0f0076;
-		public static final int action_underline = 0x7f0f0077;
-		public static final int action_undo = 0x7f0f0072;
+		public static final int action_align_center = 0x7f0f007a;
+		public static final int action_align_left = 0x7f0f0079;
+		public static final int action_align_right = 0x7f0f007b;
+		public static final int action_bold = 0x7f0f0075;
+		public static final int action_insert_image = 0x7f0f007c;
+		public static final int action_italic = 0x7f0f0076;
+		public static final int action_redo = 0x7f0f0074;
+		public static final int action_strikethrough = 0x7f0f0077;
+		public static final int action_underline = 0x7f0f0078;
+		public static final int action_undo = 0x7f0f0073;
 	}
 	public static final class layout {
 		public static final int activity_main = 0x7f04001e;

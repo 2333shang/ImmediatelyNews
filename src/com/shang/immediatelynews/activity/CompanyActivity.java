@@ -96,9 +96,13 @@ public class CompanyActivity extends BaseActivity {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				NetworkUtils.dismissLoading2(showLoading2);
-				company.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Company>>(){}, response.body().string()));
-				Log.d("news", company.toString());
-				company_handler.sendEmptyMessage(4);
+				String object = response.body().string();
+				if("login_invalid".equals(object)) {
+					NetworkUtils.toSessionInvalid(CompanyActivity.this);
+				}else {
+					company.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Company>>(){}, object));
+					company_handler.sendEmptyMessage(4);
+				}
 			}
 			
 			@Override

@@ -1,0 +1,152 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+	android:paddingLeft="5dp"
+	android:paddingRight="5dp">
+
+    <TextView 
+        android:id="@+id/news_content_detail_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="#000000"/>
+    
+    <LinearLayout 
+        android:id="@+id/news_content_detail_content_head"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:visibility="gone">
+        
+        <ImageView
+            android:id="@+id/news_content_detail_content_1"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_marginLeft="5dp"/>
+        <ImageView 
+            android:id="@+id/news_content_detail_content_2"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
+        <ImageView 
+            android:id="@+id/news_content_detail_content_3"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_marginRight="5dp"/>
+        
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/news_content_detail_video_head"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:visibility="gone"
+        android:gravity="center">
+        
+       <ImageView
+	        android:id="@+id/news_content_detail_video"
+	        android:layout_width="match_parent"
+	        android:layout_height="180dp"
+	        android:gravity="center"/>
+       
+       <ImageView
+	        android:layout_width="48dp"
+	        android:layout_height="48dp"
+	        android:src="@drawable/play"
+	        android:layout_gravity="center"/>
+    </FrameLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+        <TextView
+            android:id="@+id/news_content_detail_user"
+			android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"/>
+	        
+        <TextView
+            android:id="@+id/news_content_detail_time"
+			android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="5dp"/>
+        
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/news_content_detail_apply_head"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        
+       <Button
+	        android:id="@+id/news_content_detail_topapply"
+	        android:layout_width="70dp"
+        	android:layout_height="30dp"
+	        android:text="头条申请"
+	        android:layout_margin="2dp"
+	        android:background="@drawable/apply_button"
+	        android:textColor="#ffffff"/>
+       
+       <Button
+	        android:id="@+id/news_content_detail_update"
+	        android:layout_width="70dp"
+        	android:layout_height="30dp"
+	        android:text="修改"
+	        android:textColor="#ffffff"
+	        android:layout_margin="2dp"
+	        android:background="@drawable/apply_button"
+	        />
+       
+<!--        <Button
+	        android:id="@+id/news_content_detail_delete"
+	        android:layout_width="70dp"
+        	android:layout_height="30dp"
+	        android:text="删除"
+	        android:textColor="#ffffff"
+	        android:layout_margin="2dp"
+	        android:background="@drawable/apply_button"
+	        /> -->
+        
+    </LinearLayout>
+    
+    <RelativeLayout 
+        android:id="@+id/news_content_detail_apply"
+        android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:visibility="gone">
+        
+	    <TextView 
+	        android:id="@+id/news_content_detail_apply_reason"
+	        android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentBottom="true"/>
+	    
+	    <Button 
+	        android:id="@+id/news_content_detail_apply_rejust"
+	        android:layout_width="50dp"
+		    android:layout_height="30dp"
+		    android:text="退回"
+		    android:layout_alignParentRight="true"
+		    android:background="#ff0000"
+		    android:textColor="#ffffff"/>
+        
+	    <Button 
+	        android:id="@+id/news_content_detail_apply_agree"
+	        android:layout_width="50dp"
+		    android:layout_height="30dp"
+		    android:text="同意"
+		    android:background="#00ff00"
+		    android:textColor="#ffffff"
+		    android:layout_toLeftOf="@id/news_content_detail_apply_rejust"/>
+	    
+    </RelativeLayout>
+</LinearLayout>

@@ -1,6 +1,7 @@
 package com.shang.immediatelynews.adapter;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,14 +44,16 @@ public class CompanyAdapter extends RecyclerView.Adapter<CompanyAdapter.ViewHold
 
 		private View view;
 		private TextView order_detail_companyname;
-		private TextView order_detail_content_title;
+		private TextView order_detail_content_creater;
+		private TextView order_detail_content_createtime;
 		private CircleImageView order_detail_headicon;
 		private Button order_btn;
 		public ViewHolder(View itemView) {
 			super(itemView);
 			view = itemView;
 			order_detail_companyname = (TextView) itemView.findViewById(R.id.order_detail_companyname);
-			order_detail_content_title = (TextView) itemView.findViewById(R.id.order_detail_content_title);
+			order_detail_content_creater = (TextView) itemView.findViewById(R.id.order_detail_content_creater);
+			order_detail_content_createtime = (TextView) itemView.findViewById(R.id.order_detail_content_createtime);
 			order_detail_headicon = (CircleImageView) itemView.findViewById(R.id.order_detail_headicon);
 			order_btn = (Button) itemView.findViewById(R.id.order_btn);
 		}
@@ -66,7 +69,9 @@ public class CompanyAdapter extends RecyclerView.Adapter<CompanyAdapter.ViewHold
 	public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 		final Company c = company.get(position);
 		viewHolder.order_detail_companyname.setText(c.getCompanyName());
-		viewHolder.order_detail_content_title.setText("最新新闻！");
+		viewHolder.order_detail_content_creater.setText(c.getCreater());
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		viewHolder.order_detail_content_createtime.setText(format.format(c.getCreatetime()));
 		Glide.with(context).load(Environment.getExternalStorageDirectory() + "/first.jpg").into(viewHolder.order_detail_headicon);
 		if(c.getOrder() == null || "0".equals(c.getOrder().getOrderFlag())) {
 			viewHolder.order_btn.setText("+关注");
@@ -87,17 +92,22 @@ public class CompanyAdapter extends RecyclerView.Adapter<CompanyAdapter.ViewHold
 					
 					@Override
 					public void onResponse(Call arg0, Response response) throws IOException {
-						((Activity) context).runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								if("取消关注".equals(viewHolder.order_btn.getText())) {
-									viewHolder.order_btn.setText("+关注");
-								}else {
-									viewHolder.order_btn.setText("取消关注");
+						String object = response.body().string();
+						if("login_invalid".equals(object)) {
+							NetworkUtils.toSessionInvalid((Activity)context);
+						}else {
+							((Activity) context).runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									if("取消关注".equals(viewHolder.order_btn.getText())) {
+										viewHolder.order_btn.setText("+关注");
+									}else {
+										viewHolder.order_btn.setText("取消关注");
+									}
 								}
-							}
-						});
+							});
+						}
 					}
 					
 					@Override

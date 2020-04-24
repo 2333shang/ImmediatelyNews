@@ -22,15 +22,15 @@ public class NetworkUtils {
 	private static ProgressDialog progressDialog;
 	
 	public static void showErrorMessage(final Activity context, final String message) {
-		Log.d("news", message);
+//		Log.d("news", message);
 		context.runOnUiThread(new Runnable() {
 			
 			@Override
 			public void run() {
 				if("-1".equals(message)){
-					Toast.makeText(context, "网络中断！", 0).show();
+					Toast.makeText(context, "网络中断,请稍后再试！", 0).show();
 				}else {
-					Toast.makeText(context, "服务器异常！", 0).show();
+					Toast.makeText(context, "服务器异常,请稍后再试！", 0).show();
 				}
 			}
 		});
@@ -101,7 +101,7 @@ public class NetworkUtils {
 		}
 	}
 	
-	public static <T> void addNewsDataResponse(final Activity context, TypeToken<T> type, List list, String response, final Handler handler) {
+	public static <T> void addNewsDataResponse(final Activity context, TypeToken<T> type, final List list, String response, final Handler handler) {
 		if("login_invalid".equals(response)) {
 			NetworkUtils.toSessionInvalid(context);
 		}else {
@@ -112,7 +112,8 @@ public class NetworkUtils {
 					@Override
 					public void run() {
 						Toast.makeText(context, "当前没有新闻！", 0).show();
-						handler.sendEmptyMessage(3);
+						list.clear();
+						handler.sendEmptyMessage(1);
 					}
 				});
 				return;
@@ -122,12 +123,15 @@ public class NetworkUtils {
 				list.addAll(data);
 				handler.sendEmptyMessage(1);
 			}else {
+				list.clear();
+				list.addAll(data);
 				context.runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
 						Toast.makeText(context, "没有更新的新闻了！", 0).show();
-						handler.sendEmptyMessage(3);
+//						handler.sendEmptyMessage(3);
+						handler.sendEmptyMessage(1);
 					}
 				});
 			}
