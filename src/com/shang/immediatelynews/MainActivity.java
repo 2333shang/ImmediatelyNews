@@ -7,6 +7,7 @@ import org.xutils.view.annotation.ViewInject;
 import com.shang.immediatelynews.activity.AddNewsActivity;
 import com.shang.immediatelynews.activity.AddVideoActivity;
 import com.shang.immediatelynews.activity.CollectActivity;
+import com.shang.immediatelynews.activity.LoginActivity;
 import com.shang.immediatelynews.activity.NewsManagerActivity;
 import com.shang.immediatelynews.activity.OrderActivity;
 import com.shang.immediatelynews.activity.TopManagerActivity;
@@ -130,6 +131,16 @@ public class MainActivity extends BaseActivity {
 			nav_view.inflateMenu(R.menu.nav_menu_admin);
 		}
 		View headerLayout = nav_view.inflateHeaderView(R.layout.nav_head);
+		TextView logout = (TextView) headerLayout.findViewById(R.id.logout);
+		logout.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				ActivityUtils.finishAll();
+				Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+				startActivity(intent);
+			}
+		});
 		iv = (CircleImageView) headerLayout.findViewById(R.id.cicle_image);
 		username = (TextView) headerLayout.findViewById(R.id.username);
 		if(user.getHeadIcon()!=null) {

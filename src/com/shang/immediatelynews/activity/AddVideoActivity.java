@@ -398,7 +398,6 @@ public class AddVideoActivity extends BaseActivity {
 						NetworkUtils.dismissLoading2(showLoading2);
 						file_handler.sendEmptyMessage(3);
 					}
-					
 				});
 
 	}

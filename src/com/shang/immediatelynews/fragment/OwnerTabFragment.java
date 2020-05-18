@@ -116,6 +116,10 @@ public class OwnerTabFragment extends BaseFragment{
 	}
 	
 	protected void getMoreOwnerData() {
+		if(contents.size() == 0) {
+			refresh_handler.sendEmptyMessage(3);
+			return;
+		}
 		String newsId = contents.get(contents.size() - 1).getId();
 		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsType=" + type + "&newsId=" + newsId + "&history=1";
 		HttpRequestUtils.getRequest(url, new Callback() {

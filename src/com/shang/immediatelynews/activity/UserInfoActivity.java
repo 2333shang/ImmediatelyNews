@@ -73,8 +73,10 @@ public class UserInfoActivity extends BaseActivity {
 			GlideUtils.loadImage(this, user_headicon, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + user.getHeadIcon().getUrl());
 		user_name.setText(user.getUsername());
 		user_gender.setText(user.getGender());
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		user_birth.setText(format.format(user.getBirthdate()));
+		if(user.getBirthdate() != null) {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			user_birth.setText(format.format(user.getBirthdate()));
+		}
 		user_company.setText(user.getCompanyName());;
 	}
 

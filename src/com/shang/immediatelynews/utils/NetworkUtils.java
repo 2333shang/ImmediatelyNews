@@ -19,7 +19,7 @@ import android.widget.Toast;
 
 public class NetworkUtils {
 
-	private static ProgressDialog progressDialog;
+//	private static ProgressDialog progressDialog;
 	
 	public static void showErrorMessage(final Activity context, final String message) {
 //		Log.d("news", message);
@@ -48,7 +48,7 @@ public class NetworkUtils {
 			}
 		});
 	}
-	
+//	private static ProgressDialog progressDialog;
 //	public static void showLoading(Activity context, String message) {
 //		progressDialog = new ProgressDialog(context);
 //		progressDialog.setMessage(message);
@@ -118,7 +118,7 @@ public class NetworkUtils {
 				});
 				return;
 			}
-			if(!getBusinessKey(data.get(0)).equals(getBusinessKey(list.get(0)))) {
+			if(list.isEmpty() || !getBusinessKey(data.get(0)).equals(getBusinessKey(list.get(0)))) {
 				list.clear();
 				list.addAll(data);
 				handler.sendEmptyMessage(1);

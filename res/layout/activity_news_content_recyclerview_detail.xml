@@ -105,7 +105,7 @@
 	        android:background="@drawable/apply_button"
 	        />
        
-<!--        <Button
+       <Button
 	        android:id="@+id/news_content_detail_delete"
 	        android:layout_width="70dp"
         	android:layout_height="30dp"
@@ -113,7 +113,7 @@
 	        android:textColor="#ffffff"
 	        android:layout_margin="2dp"
 	        android:background="@drawable/apply_button"
-	        /> -->
+	        />
         
     </LinearLayout>
     

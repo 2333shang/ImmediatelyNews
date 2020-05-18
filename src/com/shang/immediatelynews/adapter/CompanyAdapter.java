@@ -10,6 +10,7 @@ import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.CompanyActivity;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Company;
+import com.shang.immediatelynews.utils.GlideUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
@@ -72,7 +73,8 @@ public class CompanyAdapter extends RecyclerView.Adapter<CompanyAdapter.ViewHold
 		viewHolder.order_detail_content_creater.setText(c.getCreater());
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		viewHolder.order_detail_content_createtime.setText(format.format(c.getCreatetime()));
-		Glide.with(context).load(Environment.getExternalStorageDirectory() + "/first.jpg").into(viewHolder.order_detail_headicon);
+//		Glide.with(context).load(Environment.getExternalStorageDirectory() + "/first.jpg").into(viewHolder.order_detail_headicon);
+		GlideUtils.loadImage(context, viewHolder.order_detail_headicon, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + c.getHeadIcon().getUrl());
 		if(c.getOrder() == null || "0".equals(c.getOrder().getOrderFlag())) {
 			viewHolder.order_btn.setText("+关注");
 		}else {

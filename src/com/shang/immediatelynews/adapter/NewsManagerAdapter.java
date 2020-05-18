@@ -5,10 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.shang.immediatelynews.MainActivity;
 import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.AddNewsActivity;
 import com.shang.immediatelynews.activity.NewsManagerActivity;
@@ -24,8 +20,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -70,7 +64,7 @@ public class NewsManagerAdapter extends RecyclerView.Adapter<NewsManagerAdapter.
 		private LinearLayout news_content_detail_apply_head;
 		private Button news_content_detail_topapply;
 		private Button news_content_detail_update;
-//		private Button news_content_detail_delete;
+		private Button news_content_detail_delete;
 
 		public ViewHolder(View itemView) {
 			super(itemView);
@@ -91,7 +85,7 @@ public class NewsManagerAdapter extends RecyclerView.Adapter<NewsManagerAdapter.
 			news_content_detail_apply_head = (LinearLayout) itemView.findViewById(R.id.news_content_detail_apply_head);
 			news_content_detail_topapply = (Button) itemView.findViewById(R.id.news_content_detail_topapply);
 			news_content_detail_update = (Button) itemView.findViewById(R.id.news_content_detail_update);
-//			news_content_detail_delete = (Button) itemView.findViewById(R.id.news_content_detail_delete);
+			news_content_detail_delete = (Button) itemView.findViewById(R.id.news_content_detail_delete);
 		}
 	}
 
@@ -158,7 +152,7 @@ public class NewsManagerAdapter extends RecyclerView.Adapter<NewsManagerAdapter.
 					viewHolder.news_content_detail_topapply.setText("已同意");
 				}
 				viewHolder.news_content_detail_update.setEnabled(false);
-//				viewHolder.news_content_detail_delete.setEnabled(false);
+				viewHolder.news_content_detail_delete.setEnabled(false);
 			}
 			viewHolder.news_content_detail_topapply.setOnClickListener(new View.OnClickListener() {
 
@@ -193,7 +187,7 @@ public class NewsManagerAdapter extends RecyclerView.Adapter<NewsManagerAdapter.
 														viewHolder.news_content_detail_topapply.setText("待处理中");
 														viewHolder.news_content_detail_topapply.setEnabled(false);
 														viewHolder.news_content_detail_update.setEnabled(false);
-//														viewHolder.news_content_detail_delete.setEnabled(false);
+														viewHolder.news_content_detail_delete.setEnabled(false);
 													}
 												});
 											}
@@ -221,7 +215,7 @@ public class NewsManagerAdapter extends RecyclerView.Adapter<NewsManagerAdapter.
 					fragment.startActivityForResult(intent, 1);
 				}
 			});
-			/*viewHolder.news_content_detail_delete.setOnClickListener(new View.OnClickListener() {
+			viewHolder.news_content_detail_delete.setOnClickListener(new View.OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
@@ -254,7 +248,7 @@ public class NewsManagerAdapter extends RecyclerView.Adapter<NewsManagerAdapter.
 						}
 					});
 				}
-			});*/
+			});
 		}
 	}
 

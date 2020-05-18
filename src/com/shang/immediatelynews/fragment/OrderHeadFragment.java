@@ -89,9 +89,9 @@ public class OrderHeadFragment extends BaseFragment {
 	
     private void getOrderContent() {
     	String companyId = order.getOrderCompany();
-    	Log.d("news", "companyId=" + companyId);
-//    	String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1";
+    	String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1" + "&companyId=" + companyId;
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1";
+    	Log.d("news", "url=" + url);
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override
@@ -100,6 +100,9 @@ public class OrderHeadFragment extends BaseFragment {
 				if("login_invalid".equals(object)) {
 					NetworkUtils.toSessionInvalid(getActivity());
 				}else {
+					if(!contents.isEmpty()) {
+						contents.clear();
+					}
 					contents.addAll(GsonUtils.getGsonWithLocalDate(new TypeToken<List<Content>>(){}, object));
 					order_head_handler.sendEmptyMessage(4);
 				}
@@ -174,8 +177,9 @@ public class OrderHeadFragment extends BaseFragment {
 	}
 
 	protected void getNewsOwnerData() {
-//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1";
+		String companyId = order.getOrderCompany();
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1" + "&companyId=" + companyId;
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1";
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override
@@ -193,9 +197,13 @@ public class OrderHeadFragment extends BaseFragment {
 
 	protected void getMoreOwnerData() {
 		String companyId = order.getOrderCompany();
+		if(contents.size() == 0) {
+			order_head_handler.sendEmptyMessage(3);
+			return;
+		}
 		final String newsId = contents.get(contents.size()-1).getId();
-//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?history=1&newsId=" + newsId;	
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&history=1" + "&companyId=" + companyId;
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?history=1&newsId=" + newsId;	
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override

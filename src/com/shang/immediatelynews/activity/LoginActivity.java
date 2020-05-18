@@ -62,13 +62,13 @@ public class LoginActivity extends BaseActivity {
 
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
-				String object = response.body().string();
+				final String object = response.body().string();
 				final User user = GsonUtils.getGsonWithLocalDate(new TypeToken<User>() {}, object);
 				runOnUiThread(new Runnable() {
 					
 					@Override
 					public void run() {
-						if("0".equals(user.getLoginMessage())){
+						if(user.getId() == null || "0".equals(user.getLoginMessage())){
 							Toast.makeText(LoginActivity.this, "用户名或密码出错!", 0).show();
 						}else {
 							//添加第一个页面的Fragment

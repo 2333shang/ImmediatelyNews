@@ -148,6 +148,10 @@ public class OrderActivity extends BaseActivity {
 			@Override
 	        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
 	       	  	//上拉刷新
+				if(orders.size() == 0) {
+					order_handler.sendEmptyMessage(3);
+					return;
+				}
 				getMoreData(orders.get(orders.size()-1));
 	       }
 		});

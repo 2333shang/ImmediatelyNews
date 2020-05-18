@@ -102,6 +102,10 @@ public class VideoFragment extends BaseFragment {
 	}
 
 	protected void getMoreData() {
+		if(videos.size() == 0) {
+			refresh_handler.sendEmptyMessage(3);
+			return;
+		}
 		String newsId = videos.get(videos.size() - 1).getId();
 		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/morevideo?newsId=" + newsId;
 		HttpRequestUtils.getRequest(url, new Callback() {

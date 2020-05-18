@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.bumptech.glide.Glide;
 import com.shang.immediatelynews.R;
+import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Order;
 import com.shang.immediatelynews.utils.GlideUtils;
 
@@ -57,7 +58,8 @@ public class TypeOrderHeadAdapter extends RecyclerView.Adapter<TypeOrderHeadAdap
 			Order order = (Order) orders.get(position);
 			String image = Environment.getExternalStorageDirectory().getAbsolutePath() + "/first.jpg";
 			holder.order_head_user.setText(order.getCompany().getCompanyName());
-			GlideUtils.loadImage(context, holder.order_head_recyclerview_image, image);
+//			GlideUtils.loadImage(context, holder.order_head_recyclerview_image, image);
+			GlideUtils.loadImage(context, holder.order_head_recyclerview_image, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + order.getCompany().getHeadIcon().getUrl());
 //			Glide.with(holder.view.getContext()).load(image).into(holder.order_head_recyclerview_image);
 		}
 	}

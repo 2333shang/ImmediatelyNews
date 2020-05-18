@@ -59,6 +59,8 @@ public class Company implements Serializable{
     private List<Content> content;
     
     private List<Content> videoContent;
+    
+    private Attachment headIcon;
 
     private Order order;
     
@@ -150,6 +152,13 @@ public class Company implements Serializable{
 		this.order = order;
 	}
 
+	public Attachment getHeadIcon() {
+		return headIcon;
+	}
+
+	public void setHeadIcon(Attachment headIcon) {
+		this.headIcon = headIcon;
+	}
 	@Override
     public String toString() {
         return "Company{" +

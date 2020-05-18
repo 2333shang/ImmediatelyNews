@@ -406,6 +406,10 @@ public class UserInfoUpdateActivity extends BaseActivity {
 	}
 	
 	private void uploadFile(final String path) {
+		if(path == null) {
+			user_handler.sendEmptyMessage(1);
+			return;
+		}
 		File file = new File(path);
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("preId", preId);
@@ -463,8 +467,10 @@ public class UserInfoUpdateActivity extends BaseActivity {
 			GlideUtils.loadImage(this, user_update_headicon, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + user.getHeadIcon().getUrl());
 		user_update_name.setText(user.getUsername());
 		user_update_gender.setText(user.getGender());
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		user_update_birth.setText(format.format(user.getBirthdate()));
+		if(user.getBirthdate() != null) {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			user_update_birth.setText(format.format(user.getBirthdate()));
+		}
 		user_update_company.setText(user.getCompanyName());
 	}
 

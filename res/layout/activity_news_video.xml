@@ -23,7 +23,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
-            android:src="@drawable/first"
+            android:src="@drawable/news"
             android:layout_alignParentLeft="true">
         </de.hdodenhof.circleimageview.CircleImageView>
         

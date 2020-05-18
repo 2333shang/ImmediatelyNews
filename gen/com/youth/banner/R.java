@@ -42,16 +42,16 @@ public final class R {
 		public static final int white_radius = 0x7f02009e;
 	}
 	public static final class id {
-		public static final int banner = 0x7f0f0152;
-		public static final int bannerTitle = 0x7f0f0116;
+		public static final int banner = 0x7f0f0154;
+		public static final int bannerTitle = 0x7f0f0117;
 		public static final int center_crop = 0x7f0f003f;
 		public static final int fit_xy = 0x7f0f0040;
-		public static final int indicator = 0x7f0f0113;
-		public static final int indicatorInside = 0x7f0f0118;
-		public static final int numIndicator = 0x7f0f0114;
-		public static final int numIndicatorInside = 0x7f0f0117;
-		public static final int titleView = 0x7f0f0115;
-		public static final int viewpager = 0x7f0f0112;
+		public static final int indicator = 0x7f0f0114;
+		public static final int indicatorInside = 0x7f0f0119;
+		public static final int numIndicator = 0x7f0f0115;
+		public static final int numIndicatorInside = 0x7f0f0118;
+		public static final int titleView = 0x7f0f0116;
+		public static final int viewpager = 0x7f0f0113;
 	}
 	public static final class layout {
 		public static final int activity_main = 0x7f04001e;

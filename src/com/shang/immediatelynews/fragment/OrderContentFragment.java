@@ -129,8 +129,8 @@ public class OrderContentFragment extends BaseFragment {
 	}
 	
 	private void getOrderCompanyNews(String companyId) {
-//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/company/companybyid?companyId=" + companyId + "&newsType=" + newsType;
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?newsType=" + newsType;
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1" + "&companyId=" + companyId + "&newsType=" + newsType;
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?newsType=" + newsType;
 		Log.d("news", url);
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
@@ -177,13 +177,17 @@ public class OrderContentFragment extends BaseFragment {
 	}
 
 	protected void getMoreData() {
+		if(company.getContent() == null || company.getContent().size() == 0) {
+			order_content_detail_handler.sendEmptyMessage(3);
+			return;
+		}
 		String newsId = null;
 		if(newsType.equals("0"))
 			newsId = company.getContent().get(company.getContent().size() - 1).getId();
 		else
 			newsId = company.getVideoContent().get(company.getVideoContent().size() - 1).getId();
-//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType ;
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType ;
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override
@@ -203,8 +207,8 @@ public class OrderContentFragment extends BaseFragment {
 	}
 
 	protected void getNewData() {
-//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/addmore?newsId=" + newsId + "&newsType=" + newsType + "&companyId=" + companyId;
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?newsType=" + newsType ;
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?history=1" + "&companyId=" + companyId + "&newsType=" + newsType;
+//		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/owner?newsType=" + newsType ;
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override

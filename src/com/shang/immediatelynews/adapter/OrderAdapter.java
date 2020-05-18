@@ -10,6 +10,7 @@ import com.shang.immediatelynews.R;
 import com.shang.immediatelynews.activity.OrderActivity;
 import com.shang.immediatelynews.constant.FileUploadConstant;
 import com.shang.immediatelynews.entities.Order;
+import com.shang.immediatelynews.utils.GlideUtils;
 import com.shang.immediatelynews.utils.HttpRequestUtils;
 import com.shang.immediatelynews.utils.NetworkUtils;
 
@@ -69,8 +70,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 		viewHolder.order_detail_content_creater.setText(order.getCompany().getCreater());
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		viewHolder.order_detail_content_createtime.setText(format.format(order.getCompany().getCreatetime()));
-		Glide.with(context).load(Environment.getExternalStorageDirectory() + "/first.jpg").into(viewHolder.order_detail_headicon);
-//		viewHolder.order_btn.setText("取消关注");
+//		Glide.with(context).load(Environment.getExternalStorageDirectory() + "/first.jpg").into(viewHolder.order_detail_headicon);
+		GlideUtils.loadImage(context, viewHolder.order_detail_headicon, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + order.getCompany().getHeadIcon().getUrl());
+		//		viewHolder.order_btn.setText("取消关注");
 		viewHolder.order_btn.setOnClickListener(new View.OnClickListener() {
 			
 			@Override

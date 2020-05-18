@@ -154,6 +154,10 @@ public class CollectActivity extends BaseActivity {
 			@Override
 	        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
 	       	  	//上拉刷新
+				if(collects.size() == 0) {
+					collect_handler.sendEmptyMessage(3);
+					return;
+				}
 				getMoreData(collects.get(collects.size()-1));
 	       }
 		});

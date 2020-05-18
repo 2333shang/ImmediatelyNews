@@ -47,26 +47,26 @@ public final class R {
 		public static final int skin_shrink_video = 0x7f020096;
 	}
 	public static final class id {
-		public static final int back = 0x7f0f0126;
-		public static final int bottom_progressbar = 0x7f0f0125;
-		public static final int cover = 0x7f0f0123;
-		public static final int current = 0x7f0f011d;
-		public static final int duration_image_tip = 0x7f0f0128;
-		public static final int duration_progressbar = 0x7f0f012b;
-		public static final int fullscreen = 0x7f0f0120;
-		public static final int layout_bottom = 0x7f0f011c;
-		public static final int layout_top = 0x7f0f0121;
-		public static final int loading = 0x7f0f0122;
-		public static final int progress = 0x7f0f011e;
-		public static final int share = 0x7f0f0127;
+		public static final int back = 0x7f0f0127;
+		public static final int bottom_progressbar = 0x7f0f0126;
+		public static final int cover = 0x7f0f0124;
+		public static final int current = 0x7f0f011e;
+		public static final int duration_image_tip = 0x7f0f0129;
+		public static final int duration_progressbar = 0x7f0f012c;
+		public static final int fullscreen = 0x7f0f0121;
+		public static final int layout_bottom = 0x7f0f011d;
+		public static final int layout_top = 0x7f0f0122;
+		public static final int loading = 0x7f0f0123;
+		public static final int progress = 0x7f0f011f;
+		public static final int share = 0x7f0f0128;
 		public static final int start = 0x7f0f0036;
-		public static final int surface_container = 0x7f0f011b;
-		public static final int thumb = 0x7f0f0124;
+		public static final int surface_container = 0x7f0f011c;
+		public static final int thumb = 0x7f0f0125;
 		public static final int title = 0x7f0f004a;
-		public static final int total = 0x7f0f011f;
-		public static final int tv_current = 0x7f0f0129;
-		public static final int tv_duration = 0x7f0f012a;
-		public static final int volume_progressbar = 0x7f0f012c;
+		public static final int total = 0x7f0f0120;
+		public static final int tv_current = 0x7f0f012a;
+		public static final int tv_duration = 0x7f0f012b;
+		public static final int volume_progressbar = 0x7f0f012d;
 	}
 	public static final class layout {
 		public static final int jc_layout_base = 0x7f040039;

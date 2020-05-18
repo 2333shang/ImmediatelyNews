@@ -118,6 +118,10 @@ public class TopFragment extends BaseFragment {
 			@Override
 	        public void onRefreshLoadMore(MaterialRefreshLayout materialRefreshLayout) {
 	       	  	//上拉刷新
+				if(tops.get("0").size() == 0) {
+					refresh_handler.sendEmptyMessage(3);
+					return;
+				}
 				getMoreData(tops.get("0").get(tops.get("0").size()-1));
 	       }
 		});
@@ -260,21 +264,38 @@ public class TopFragment extends BaseFragment {
 					tops.get("1").clear();
 					tops.get("1").addAll(data.get("1"));
 					List<Top> list = data.get("0");
-					Top top_current_new = tops.get("0").get(0);
-					//当前最新新闻比查询得到的新闻时间都要早
-					if(!top_current_new.getId().equals(list.get(0).getId())) {
-						tops.get("0").clear();
-						tops.get("0").addAll(list);
-						refresh_handler.sendEmptyMessage(1);
+					if(tops.get("0").size() == 0) {
+						if(list == null || list.size() == 0) {
+							getActivity().runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									Toast.makeText(getActivity(), "没有更新的新闻了！", 0).show();
+									refresh_handler.sendEmptyMessage(3);
+								}
+							});
+						}else{
+							tops.get("0").clear();
+							tops.get("0").addAll(list);
+							refresh_handler.sendEmptyMessage(1);
+						}
 					}else {
-						getActivity().runOnUiThread(new Runnable() {
-							
-							@Override
-							public void run() {
-								Toast.makeText(getActivity(), "没有更新的新闻了！", 0).show();
-								refresh_handler.sendEmptyMessage(3);
-							}
-						});
+						Top top_current_new = tops.get("0").get(0);
+						//当前最新新闻比查询得到的新闻时间都要早
+						if(!top_current_new.getId().equals(list.get(0).getId())) {
+							tops.get("0").clear();
+							tops.get("0").addAll(list);
+							refresh_handler.sendEmptyMessage(1);
+						}else {
+							getActivity().runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									Toast.makeText(getActivity(), "没有更新的新闻了！", 0).show();
+									refresh_handler.sendEmptyMessage(3);
+								}
+							});
+						}
 					}
 				}
 			}

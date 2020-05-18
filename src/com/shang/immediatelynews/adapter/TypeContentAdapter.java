@@ -84,7 +84,7 @@ public class TypeContentAdapter extends RecyclerView.Adapter<TypeContentAdapter.
 			viewHolder.news_content_detail_content_head.setVisibility(View.VISIBLE);
 			for(int i=0; i<viewHolder.news_content_detail_contents.size(); i++) {
 				ImageView imageView = viewHolder.news_content_detail_contents.get(i);
-				imageView.setVisibility(View.GONE);
+				imageView.setVisibility(View.INVISIBLE);
 			}
 			for(int i=0; i<pics.size(); i++) {
 				final ImageView imageView = viewHolder.news_content_detail_contents.get(i);

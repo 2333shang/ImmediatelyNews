@@ -156,11 +156,16 @@ public class NewsContentActivity extends BaseActivity {
 			
 			@Override
 			public void onResponse(Call arg0, Response response) throws IOException {
-				Collect collected = GsonUtils.getGsonWithLocalDate(new TypeToken<Collect>(){}, response.body().string());
-				Message message = Message.obtain();
-				message.obj = collected;
-				message.what = 1;
-				news_content_handler.sendMessage(message);
+				String data = response.body().string();
+				if("login_invalid".equals(data)) {
+					NetworkUtils.toSessionInvalid(NewsContentActivity.this);
+				}else {
+					Collect collected = GsonUtils.getGsonWithLocalDate(new TypeToken<Collect>(){}, data);
+					Message message = Message.obtain();
+					message.obj = collected;
+					message.what = 1;
+					news_content_handler.sendMessage(message);
+				}
 			}
 			
 			@Override

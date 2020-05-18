@@ -168,7 +168,12 @@ public class TypeCompanyFragment extends BaseFragment {
 	}
 
 	protected void getMoreData() {
-		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/morecontent";
+		if(contents.size() == 0) {
+			type_handler.sendEmptyMessage(3);
+			return;
+		}
+		String newsId = contents.get(contents.size() - 1).getId();
+		String url = FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + "/content/morecontent?newsId=" + newsId;
 		HttpRequestUtils.getRequest(url, new Callback() {
 			
 			@Override

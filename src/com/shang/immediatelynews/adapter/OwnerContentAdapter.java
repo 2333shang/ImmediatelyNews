@@ -93,6 +93,7 @@ public class OwnerContentAdapter extends RecyclerView.Adapter<OwnerContentAdapte
 					final ImageView imageView = viewHolder.news_content_detail_contents.get(i);
 					imageView.setImageResource(R.drawable.news);
 					GlideUtils.loadImage(context, imageView, FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl());
+//					Glide.with(context).load(FileUploadConstant.FILE_NET + FileUploadConstant.FILE_CONTEXT_PATH + FileUploadConstant.FILE_REAL_PATH + pics.get(i).getUrl()).into(imageView);
 					if(i == 2) {
 						break;
 					}
